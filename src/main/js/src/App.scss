@@ -11,9 +11,11 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -39,4 +41,15 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.routes-list__wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border-radius: 0.5rem;
+
+  h2 {
+    margin: 0.5rem 0;
+  }
 }
