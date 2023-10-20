@@ -1,0 +1,244 @@
+openapi: "3.0.0"
+info:
+  version: 1.3.0
+  title: Anon Frontend Services
+servers:
+  - url: http://localhost:8080/api
+    description: development
+paths:
+
+  /warehouses:
+    get:
+      summary: List all warehouses
+      operationId: listWarehouses
+      tags:
+        - warehouses
+      responses:
+        '200':
+          description: Whole list of available warehouses
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BasicWarehouse"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /warehouses/{warehouseId}:
+    get:
+      parameters:
+        - name: warehouseId
+          in: path
+          required: true
+          description: ID of the warehouse
+          schema:
+            type: integer
+            example: 1
+      summary: Get warehouse by id
+      operationId: getWarehouseById
+      tags:
+        - warehouses
+      responses:
+        '200':
+          description: Whole warehouse object by id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FullWarehouse"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /warehouses/{warehouseId}/items:
+    get:
+      parameters:
+        - name: warehouseId
+          in: path
+          required: true
+          description: ID of the warehouse
+          schema:
+            type: integer
+            example: 1
+      summary: List all items in a given warehouse
+      operationId: listWarehouseItems
+      tags:
+        - warehouses
+      responses:
+        '200':
+          description: all items in a given warehouse
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WarehouseItem"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+
+  /warehouses/{warehouseId}/items/{itemId}:
+    get:
+      parameters:
+        - name: warehouseId
+          in: path
+          required: true
+          description: ID of the warehouse
+          schema:
+            type: integer
+            example: 1
+        - name: itemId
+          in: path
+          required: true
+          description: ID of the item
+          schema:
+            type: integer
+            example: 1
+      summary: Get specific item in a given warehouse
+      operationId: getWarehouseItemById
+      tags:
+        - warehouses
+      responses:
+        '200':
+          description: specific item from a given warehouse
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WarehouseItem"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+#
+#  /user/profile:
+#    get:
+#
+#  /user/orders:
+#    get:
+#
+#
+#  /orders/:
+#      get:
+
+
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: http://localhost:8081/realms/anon/protocol/openid-connect/auth
+          tokenUrl: http://localhost:8081/realms/anon/protocol/openid-connect/token
+          scopes: { }
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    BasicWarehouse:
+      type: object
+      required:
+        - id
+        - capacity
+      properties:
+        id:
+          type: string
+          format: UUID
+        capacity:
+          type: integer
+          format: int32
+
+    FullWarehouse:
+      allOf:
+        - $ref: "#/components/schemas/BasicWarehouse"
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/WarehouseItem"
+
+    WarehouseItem:
+      type: object
+      required:
+        - name
+        - size
+      properties:
+        id:
+          type: string
+          format: UUID
+        name:
+          type: string
+        size:
+          type: integer
+
+
+    BadRequest:
+      type: object
+      required:
+        - errors
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            required:
+              - message
+            properties:
+              fieldName:
+                type: string
+                maxLength: 100
+              message:
+                type: string
+                maxLength: 500
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+  parameters:
+    Page:
+      name: page
+      in: query
+      description: Results page you want to retrieve (0..N).
+      schema:
+        type: integer
+        format: int32
+    PageSize:
+      name: size
+      in: query
+      description: Number of records per page.
+      schema:
+        type: integer
+        format: int32
+    PageSort:
+      name: sort
+      in: query
+      description: Sorting criteria 'property,asc|desc' Default sort order is ascending. Multiple sort criteria are supported.
+      schema:
+        type: array
+        items:
+          type: array
+          items:
+            type: string
+security:
+  - oauth2: [ ]
+  - bearerAuth: [ ]
