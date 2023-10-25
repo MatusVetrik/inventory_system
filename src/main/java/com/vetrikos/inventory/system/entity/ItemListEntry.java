@@ -1,24 +1,32 @@
 package com.vetrikos.inventory.system.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Setter;
 
-@Entity
-@Table(name = "ITEM_LIST_ENTRY")
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-@Data
+@Getter
+@Setter
+@Builder
+@Entity
+@Table(name = "ITEM_LIST_ENTRY")
 public class ItemListEntry {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "quantity")
+    @Column(nullable = false)
     private Integer quantity;
 
     @ManyToOne()

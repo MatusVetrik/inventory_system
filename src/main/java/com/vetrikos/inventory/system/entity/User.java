@@ -1,28 +1,25 @@
 package com.vetrikos.inventory.system.entity;
 
 import jakarta.persistence.*;
+import java.util.UUID;
 import lombok.*;
 
 import java.util.List;
 
-@Entity
-@Table(name = "USERS")
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-@Data
+@Getter
+@Setter
 @Builder
+@Entity
+@Table(name = "USERS")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
-    @Column(name = "username")
+    @Column(nullable = false, unique = true)
     private String username;
-
-    @Column(name = "is_manager")
-    private Boolean isManager;
 
     @OneToMany(mappedBy = "createdBy", fetch = FetchType.EAGER)
     private List<Order> orders;
