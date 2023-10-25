@@ -1,6 +1,7 @@
 package com.vetrikos.inventory.system;
 
-import com.vetrikos.inventory.system.classes.User;
+import com.vetrikos.inventory.system.entity.User;
+import com.vetrikos.inventory.system.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;

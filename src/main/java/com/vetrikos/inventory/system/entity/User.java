@@ -1,4 +1,4 @@
-package com.vetrikos.inventory.system.classes;
+package com.vetrikos.inventory.system.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

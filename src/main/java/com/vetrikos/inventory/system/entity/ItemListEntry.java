@@ -1,4 +1,4 @@
-package com.vetrikos.inventory.system.classes;
+package com.vetrikos.inventory.system.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -28,7 +28,7 @@ public class ItemListEntry {
     @ManyToOne()
     @JoinColumn(name = "order_id")
     private Order orderId;
-    
+
     @ManyToOne()
     @JoinColumn(name = "warehouse_id")
     private Warehouse warehouseId;
