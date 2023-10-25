@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "generate-client": "openapi-generator-cli generate -i ../resources/api/anon-frontend-services.openapi.yaml -g typescript-axios -o ../generated-js/anon-client -p npmName=anon-client-ts-axios -p npmVersion=1.0.0 -p supportsES6=true",
+    "generate-client": "openapi-generator-cli generate -i ../resources/api/frontend-services.openapi.yaml -g typescript-axios -o ../generated-js/anon-client -p npmName=anon-client-ts-axios -p npmVersion=1.0.0 -p supportsES6=true",
     "preview": "vite preview"
   },
   "dependencies": {
