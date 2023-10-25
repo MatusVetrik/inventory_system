@@ -2,7 +2,7 @@ import {ReactElement} from "react";
 
 
 const IntroPage = (): ReactElement => {
-    return <div>Intro page</div>
+    return <h1>Intro page</h1>
 }
 
 export default IntroPage;

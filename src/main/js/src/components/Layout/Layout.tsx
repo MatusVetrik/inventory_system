@@ -8,14 +8,15 @@ import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import Badge from '@mui/material/Badge';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import {mainListItems} from "./components/Menu";
 import {Container, Grid} from "@mui/material";
+import {useNavigate} from "react-router-dom";
 import Drawer from "./components/Drawer";
 import AppBar from "./components/AppBar";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import Menu from "./components/Menu";
+import routes from "../../routing/routes";
 
 export const drawerWidth: number = 240;
 
@@ -31,6 +32,8 @@ export default ({children}: Props) => {
     const toggleDrawer = () => {
         setOpen(!open);
     };
+
+    const navigate = useNavigate();
 
     return (
         <ThemeProvider theme={defaultTheme}>
@@ -58,10 +61,8 @@ export default ({children}: Props) => {
                         >
                             Inventory system
                         </Typography>
-                        <IconButton color="inherit">
-                            <Badge badgeContent={4} color="secondary">
-                                <NotificationsIcon/>
-                            </Badge>
+                        <IconButton color="inherit" onClick={() => navigate(routes.profile)}>
+                            <AccountCircleIcon fontSize="large"/>
                         </IconButton>
                     </Toolbar>
                 </AppBar>
@@ -80,7 +81,7 @@ export default ({children}: Props) => {
                     </Toolbar>
                     <Divider/>
                     <List component="nav">
-                        {mainListItems}
+                        <Menu/>
                         <Divider sx={{my: 1}}/>
                     </List>
                 </Drawer>

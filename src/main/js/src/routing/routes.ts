@@ -1,5 +1,7 @@
 export default {
     index: '/app/',
     intro: '/app/intro/',
-    sign_in: '/app/sign-in/'
+    profile: '/app/profile',
+    warehouses: '/app/warehouses',
+    orders: '/app/orders',
 };
