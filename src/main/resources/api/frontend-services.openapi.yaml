@@ -1,7 +1,7 @@
 openapi: "3.0.0"
 info:
-  version: 1.3.0
-  title: Anon Frontend Services
+  version: 1.0.0
+  title: Inventory System Frontend Services
 servers:
   - url: http://localhost:8080/api
     description: development
@@ -26,17 +26,42 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+    post:
+      summary: Create warehouse
+      operationId: createWarehouse
+      tags:
+        - warehouses
+      requestBody:
+        description: Warehouse to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WarehouseRequest'
+      responses:
+        '201':
+          description: Created warehouse
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FullWarehouse"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 
   /warehouses/{warehouseId}:
     get:
       parameters:
-        - name: warehouseId
-          in: path
-          required: true
-          description: ID of the warehouse
-          schema:
-            type: integer
-            example: 1
+        - $ref: "#/components/parameters/WarehouseId"
       summary: Get warehouse by id
       operationId: getWarehouseById
       tags:
@@ -58,17 +83,11 @@ paths:
   /warehouses/{warehouseId}/items:
     get:
       parameters:
-        - name: warehouseId
-          in: path
-          required: true
-          description: ID of the warehouse
-          schema:
-            type: integer
-            example: 1
+        - $ref: "#/components/parameters/WarehouseId"
       summary: List all items in a given warehouse
       operationId: listWarehouseItems
       tags:
-        - warehouses
+        - warehouseItems
       responses:
         '200':
           description: all items in a given warehouse
@@ -84,29 +103,50 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+    post:
+      summary: Create warehouse item
+      operationId: createWarehouseItem
+      parameters:
+        - $ref: "#/components/parameters/WarehouseId"
+      tags:
+        - warehouseItems
+      requestBody:
+        description: Item to create in a given warehouse
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WarehouseItemRequest'
+      responses:
+        '201':
+          description: Created warehouse item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WarehouseItem"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 
 
   /warehouses/{warehouseId}/items/{itemId}:
     get:
       parameters:
-        - name: warehouseId
-          in: path
-          required: true
-          description: ID of the warehouse
-          schema:
-            type: integer
-            example: 1
-        - name: itemId
-          in: path
-          required: true
-          description: ID of the item
-          schema:
-            type: integer
-            example: 1
+        - $ref: "#/components/parameters/WarehouseId"
+        - $ref: "#/components/parameters/ItemId"
       summary: Get specific item in a given warehouse
       operationId: getWarehouseItemById
       tags:
-        - warehouses
+        - warehouseItem
       responses:
         '200':
           description: specific item from a given warehouse
@@ -120,6 +160,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+
 #
 #  /user/profile:
 #    get:
@@ -154,11 +195,25 @@ components:
         - capacity
       properties:
         id:
-          type: string
-          format: UUID
+          type: integer
+          format: int64
         capacity:
           type: integer
           format: int32
+
+    WarehouseRequest:
+      type: object
+      required:
+        - capacity
+        - userId
+      properties:
+        capacity:
+          type: integer
+          format: int32
+        userId:
+          type: string
+          format: UUID
+
 
     FullWarehouse:
       allOf:
@@ -169,21 +224,49 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/WarehouseItem"
+            users:
+              type: array
+              items:
+                $ref: "#/components/schemas/User"
 
-    WarehouseItem:
+    User:
       type: object
       required:
-        - name
-        - size
+        - id
+        - username
       properties:
         id:
           type: string
           format: UUID
+        username:
+          type: string
+
+
+    WarehouseItem:
+      type: object
+      required:
+        - id
+        - name
+        - size
+      properties:
+        id:
+          type: integer
+          format: int64
         name:
           type: string
         size:
           type: integer
 
+    WarehouseItemRequest:
+      type: object
+      required:
+        - name
+        - size
+      properties:
+        name:
+          type: string
+        size:
+          type: integer
 
     BadRequest:
       type: object
@@ -214,31 +297,25 @@ components:
           format: int32
         message:
           type: string
+
   parameters:
-    Page:
-      name: page
-      in: query
-      description: Results page you want to retrieve (0..N).
+    WarehouseId:
+      name: warehouseId
+      in: path
+      required: true
+      description: ID of the warehouse
       schema:
         type: integer
-        format: int32
-    PageSize:
-      name: size
-      in: query
-      description: Number of records per page.
+        format: int64
+    ItemId:
+      name: itemId
+      in: path
+      required: true
+      description: ID of the item
       schema:
         type: integer
-        format: int32
-    PageSort:
-      name: sort
-      in: query
-      description: Sorting criteria 'property,asc|desc' Default sort order is ascending. Multiple sort criteria are supported.
-      schema:
-        type: array
-        items:
-          type: array
-          items:
-            type: string
+        format: int64
+
 security:
   - oauth2: [ ]
   - bearerAuth: [ ]
