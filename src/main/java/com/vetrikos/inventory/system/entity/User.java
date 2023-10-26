@@ -14,18 +14,19 @@ import java.util.List;
 @Entity
 @Table(name = "USERS")
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
 
-    @Column(nullable = false, unique = true)
-    private String username;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
-    @OneToMany(mappedBy = "createdBy", fetch = FetchType.EAGER)
-    private List<Order> orders;
+  @Column(nullable = false, unique = true)
+  private String username;
 
-    @ManyToOne
-    @JoinColumn(name = "warehouse_id")
-    private Warehouse warehouse;
+  @OneToMany(mappedBy = "createdBy", fetch = FetchType.EAGER)
+  private List<Order> orders;
+
+  @ManyToOne
+  @JoinColumn(name = "warehouse_id")
+  private Warehouse warehouse;
 
 }

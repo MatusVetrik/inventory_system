@@ -23,22 +23,23 @@ import lombok.Setter;
 @Entity
 @Table(name = "WAREHOUSES")
 public class Warehouse {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
 
-    @Column(nullable = false)
-    private Integer capacity;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long id;
 
-    @OneToMany(mappedBy = "warehouseId")
-    private List<ItemListEntry> entries;
+  @Column(nullable = false)
+  private Integer capacity;
 
-    @OneToMany(mappedBy = "fromWarehouse")
-    private List<Order> sendOrders;
+  @OneToMany(mappedBy = "warehouseId")
+  private List<ItemListEntry> entries;
 
-    @OneToMany(mappedBy = "toWarehouse")
-    private List<Order> receivedOrders;
+  @OneToMany(mappedBy = "fromWarehouse")
+  private List<Order> sendOrders;
 
-    @OneToMany(mappedBy = "warehouse")
-    private List<User> users;
+  @OneToMany(mappedBy = "toWarehouse")
+  private List<Order> receivedOrders;
+
+  @OneToMany(mappedBy = "warehouse")
+  private List<User> users;
 }

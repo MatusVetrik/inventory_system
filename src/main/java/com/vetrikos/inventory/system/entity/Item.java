@@ -24,18 +24,18 @@ import lombok.Setter;
 @Table(name = "ITEMS")
 public class Item {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long id;
 
-    @Column(nullable = false)
-    private String name;
+  @Column(nullable = false)
+  private String name;
 
-    @Column(nullable = false)
-    private Integer size;
+  @Column(nullable = false)
+  private Integer size;
 
-    @OneToMany(mappedBy = "itemId")
-    private List<ItemListEntry> entries;
+  @OneToMany(mappedBy = "itemId")
+  private List<ItemListEntry> entries;
 
 
 }

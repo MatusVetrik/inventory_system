@@ -22,23 +22,24 @@ import lombok.Setter;
 @Entity
 @Table(name = "ITEM_LIST_ENTRY")
 public class ItemListEntry {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
 
-    @Column(nullable = false)
-    private Integer quantity;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long id;
 
-    @ManyToOne()
-    @JoinColumn(name = "item_id")
-    private Item itemId;
+  @Column(nullable = false)
+  private Integer quantity;
 
-    @ManyToOne()
-    @JoinColumn(name = "order_id")
-    private Order orderId;
+  @ManyToOne()
+  @JoinColumn(name = "item_id")
+  private Item itemId;
 
-    @ManyToOne()
-    @JoinColumn(name = "warehouse_id")
-    private Warehouse warehouseId;
+  @ManyToOne()
+  @JoinColumn(name = "order_id")
+  private Order orderId;
+
+  @ManyToOne()
+  @JoinColumn(name = "warehouse_id")
+  private Warehouse warehouseId;
 
 }
