@@ -19,7 +19,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BasicWarehouse"
+                type: array
+                items:
+                  $ref: "#/components/schemas/BasicWarehouse"
         default:
           description: unexpected error
           content:
@@ -73,6 +75,61 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/FullWarehouse"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: Update warehouse
+      operationId: updateWarehouse
+      parameters:
+        - $ref: "#/components/parameters/WarehouseId"
+      tags:
+        - warehouses
+      requestBody:
+        description: Warehouse to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WarehouseUpdateRequest'
+      responses:
+        '200':
+          description: Updated warehouse
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FullWarehouse"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Delete warehouse
+      operationId: deleteWarehouse
+      parameters:
+        - $ref: "#/components/parameters/WarehouseId"
+      tags:
+        - warehouses
+      responses:
+        '204':
+          description: Delete confirmation
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
         default:
           description: unexpected error
           content:
@@ -146,7 +203,7 @@ paths:
       summary: Get specific item in a given warehouse
       operationId: getWarehouseItemById
       tags:
-        - warehouseItem
+        - warehouseItems
       responses:
         '200':
           description: specific item from a given warehouse
@@ -160,6 +217,64 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+    put:
+      parameters:
+        - $ref: "#/components/parameters/WarehouseId"
+        - $ref: "#/components/parameters/ItemId"
+      summary: Update item in a given warehouse
+      operationId: updateWarehouseItem
+      tags:
+        - warehouseItems
+      requestBody:
+        description: Update item data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WarehouseItemRequest'
+      responses:
+        '200':
+          description: updated item from a given warehouse
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WarehouseItem"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      parameters:
+        - $ref: "#/components/parameters/WarehouseId"
+        - $ref: "#/components/parameters/ItemId"
+      summary: Delete item in a given warehouse
+      operationId: deleteWarehouseItem
+      tags:
+        - warehouseItems
+      responses:
+        '204':
+          description: Delete confirmation
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
 
 #
 #  /user/profile:
@@ -213,6 +328,15 @@ components:
         userId:
           type: string
           format: UUID
+
+    WarehouseUpdateRequest:
+      type: object
+      required:
+        - capacity
+      properties:
+        capacity:
+          type: integer
+          format: int32
 
 
     FullWarehouse:
