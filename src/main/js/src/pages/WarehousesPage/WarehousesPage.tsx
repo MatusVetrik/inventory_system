@@ -6,8 +6,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import {Container, Grid, styled} from "@mui/material";
-import {useNavigation} from "react-router-dom";
+import {styled} from "@mui/material";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -47,7 +46,6 @@ const rows = [
     createData(6, 84989,"Brno"),
 
 ];
-const navigation = useNavigation();
 
 export default (): ReactElement => (
 

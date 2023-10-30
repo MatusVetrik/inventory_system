@@ -1,4 +1,4 @@
-import React, {ReactElement} from 'react';
+import {ReactElement} from 'react';
 import {Route, Routes} from 'react-router-dom';
 import routes from './routes';
 import App from "../App";
