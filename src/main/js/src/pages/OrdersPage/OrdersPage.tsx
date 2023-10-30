@@ -1,6 +1,5 @@
 import * as React from 'react';
-import {DataGrid, GridToolbar, GridRowId, GridRowsProp, GridRowParams} from '@mui/x-data-grid';
-import { useDemoData } from '@mui/x-data-grid-generator';
+import {DataGrid, GridToolbar, GridRowsProp, GridRowParams} from '@mui/x-data-grid';
 import {useNavigate} from "react-router-dom";
 import routes from "../../routing/routes"
 
@@ -20,7 +19,7 @@ const columns = [
     { field: 'to', headerName: 'To', width: 130 },
 ];
 
-const OrderPage = () => {
+const OrdersPage = () => {
     const navigate = useNavigate();
 
     const orders: Order[] = [
@@ -45,34 +44,21 @@ const OrderPage = () => {
 
     ];
 
-    const rows: GridRowsProp<Order> = orders.map(order => ({
-        id: order.id,
-        createdBy: order.createdBy,
-        price: order.price,
-        from: order.from,
-        to: order.to,
-    }));
-
-    function handleRowClick(row: GridRowParams<any>) {
-        console.log("clicked"+row.id)
-    }
 
     return (
         <div style={{ height: 400, width: '100%' }}>
             <h1>Orders</h1>
             <DataGrid
                 slots={{ toolbar: GridToolbar }}
-                rows={rows}
+                rows={orders}
                 columns={columns}
                 rowHeight={35}
-                onRowClick={(row) => handleRowClick(row)}
                 headerHeight={40}
                 autoPageSize
-                style={{ cursor: 'pointer' }}
             />
         </div>
     );
 };
 
-export default OrderPage;
+export default OrdersPage;
 

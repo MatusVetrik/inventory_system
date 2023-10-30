@@ -1,32 +1,14 @@
 import {ReactElement} from "react";
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell, {tableCellClasses} from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import {styled} from "@mui/material";
+import {DataGrid, GridRowParams, GridToolbar} from '@mui/x-data-grid';
+import * as React from "react";
+import routes from "../../routing/routes";
+import {useNavigate} from "react-router-dom";
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    [`&.${tableCellClasses.head}`]: {
-        backgroundColor: theme.palette.common.black,
-        color: theme.palette.common.white,
-    },
-    [`&.${tableCellClasses.body}`]: {
-        fontSize: 14,
-    },
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    '&:nth-of-type(odd)': {
-        backgroundColor: theme.palette.action.hover,
-    },
-    // hide last border
-    '&:last-child td, &:last-child th': {
-        border: 0,
-    },
-}));
+const columns = [
+    { field: 'id', headerName: 'ID', width: 100 },
+    { field: 'capacity', headerName: 'Capacity', width: 200 },
+    { field: 'location', headerName: 'Location', width: 200 },
+];
 
 function createData(
     id: number,
@@ -34,7 +16,7 @@ function createData(
     location:string
 
 ) {
-    return { id, capacity,location };
+    return { id:id, capacity:capacity,location:location };
 }
 
 const rows = [
@@ -47,37 +29,27 @@ const rows = [
 
 ];
 
-export default (): ReactElement => (
+const WarehousePage = () => {
+    const navigate = useNavigate();
+    function handleRowClick(row: GridRowParams<any>) {
+        const rowData = rows.find(r => r.id === row.id);
+        navigate(routes.items, { state: { rowDetails: rowData } });
+    }
+    return (
+        <div>
+            <h1>Warehouses</h1>
+            <DataGrid
+                slots={{toolbar: GridToolbar}}
+                rows={rows}
+                columns={columns}
+                onRowClick={(row) => handleRowClick(row)}
+                style={{ cursor: 'pointer' }}
+                rowHeight={35}
+                headerHeight={40}
 
-    <div >
-        <h1>Warehouses</h1>
-        <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} size="small" aria-label="table">
-                <TableHead>
-                    <StyledTableRow>
-                        <StyledTableCell>ID</StyledTableCell>
-                        <StyledTableCell align="right">Capacity</StyledTableCell>
-                        <StyledTableCell align="right">Location</StyledTableCell>
+            />
+        </div>
 
-                    </StyledTableRow>
-                </TableHead>
-                <TableBody>
-                    {rows.map((row) => (
-                        <TableRow
-                            key={row.id}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                        >
-                            <TableCell component="th" scope="row">
-                                {row.id}
-                            </TableCell>
-                            <TableCell align="right">{row.capacity}</TableCell>
-                            <TableCell align="right">{row.location}</TableCell>
-
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
-    </div>
-
-)
+    )
+}
+export default WarehousePage;

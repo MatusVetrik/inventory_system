@@ -4,4 +4,5 @@ export default {
     profile: '/app/profile',
     warehouses: '/app/warehouses',
     orders: '/app/orders',
+    items: '/app/items',
 };
