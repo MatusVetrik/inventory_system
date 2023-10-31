@@ -349,6 +349,9 @@ components:
       allOf:
         - $ref: "#/components/schemas/BasicWarehouse"
         - type: object
+          required:
+            - items
+            - users
           properties:
             items:
               type: array
@@ -380,6 +383,7 @@ components:
         - id
         - name
         - size
+        - quantity
       properties:
         id:
           type: integer
@@ -387,6 +391,8 @@ components:
         name:
           type: string
         size:
+          type: integer
+        quantity:
           type: integer
 
     WarehouseItemRequest:
