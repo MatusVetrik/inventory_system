@@ -6,11 +6,11 @@ import com.vetrikos.inventory.system.model.WarehouseRequestRestDTO;
 import com.vetrikos.inventory.system.model.WarehouseUpdateRequestRestDTO;
 import com.vetrikos.inventory.system.repository.UserRepository;
 import com.vetrikos.inventory.system.repository.WarehouseRepository;
-import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -43,8 +43,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             UserService.userNotFoundMessage(requestRestDTO.getUserId())));
 
     Warehouse warehouse = Warehouse.builder()
-        // TODO: set name when openapi dto changes
-        .name("name")
+        .name(requestRestDTO.getName())
         .capacity(requestRestDTO.getCapacity())
         .users(List.of(user))
         .build();
@@ -62,8 +61,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             WarehouseService.warehouseNotFoundMessage(warehouseId)));
 
     warehouse.setCapacity(updateRequestRestDTO.getCapacity());
-    // TODO: set name when openapi dto changes
-    warehouse.setName("new name");
+    warehouse.setName(updateRequestRestDTO.getName());
 
     return warehouse;
   }

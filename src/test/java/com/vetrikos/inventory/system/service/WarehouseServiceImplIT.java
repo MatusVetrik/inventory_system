@@ -99,15 +99,16 @@ class WarehouseServiceImplIT {
     sampleUser = userRepository.save(sampleUser);
 
     int capacity = 100;
-    WarehouseRequestRestDTO requestRestDTO = new WarehouseRequestRestDTO(capacity, sampleUser.getId());
+    String warehouseName = "Lidl warehouse";
+    WarehouseRequestRestDTO requestRestDTO = new WarehouseRequestRestDTO(capacity,
+        sampleUser.getId(), warehouseName);
 
     Warehouse result = warehouseService.createWarehouse(requestRestDTO);
 
     Warehouse expectedWarehouse = Warehouse.builder()
         .id(result.getId())
         .capacity(capacity)
-        // TODO update when dto changes
-        .name("name")
+        .name(warehouseName)
         .users(List.of(sampleUser))
         .build();
 
@@ -119,7 +120,7 @@ class WarehouseServiceImplIT {
   @Test
   void createWarehouseShouldThrowException() {
     UUID userId = UUID.randomUUID();
-    WarehouseRequestRestDTO requestRestDTO = new WarehouseRequestRestDTO(100, userId);
+    WarehouseRequestRestDTO requestRestDTO = new WarehouseRequestRestDTO(100, userId, "Name");
     assertThatThrownBy(() -> warehouseService.createWarehouse(requestRestDTO))
         .hasMessage(UserService.userNotFoundMessage(userId));
   }
@@ -137,19 +138,22 @@ class WarehouseServiceImplIT {
 
     Long warehouseId = warehouse.getId();
     int newCapacity = 200;
-    WarehouseUpdateRequestRestDTO requestRestDTO = new WarehouseUpdateRequestRestDTO(newCapacity);
+    String newWarehouseName = "Lidl warehouse";
+    WarehouseUpdateRequestRestDTO requestRestDTO = new WarehouseUpdateRequestRestDTO();
+    requestRestDTO.setCapacity(newCapacity);
+    requestRestDTO.setName(newWarehouseName);
 
     Warehouse result = warehouseService.updateWarehouse(warehouseId, requestRestDTO);
 
     assertThat(result).isNotNull()
         .hasFieldOrPropertyWithValue("capacity", newCapacity)
-        .hasFieldOrPropertyWithValue("name", "new name");
+        .hasFieldOrPropertyWithValue("name", newWarehouseName);
   }
 
   @Test
   void updateWarehouseShouldThrowException() {
     Long warehouseId = 1L;
-    WarehouseUpdateRequestRestDTO requestRestDTO = new WarehouseUpdateRequestRestDTO(100);
+    WarehouseUpdateRequestRestDTO requestRestDTO = new WarehouseUpdateRequestRestDTO();
     assertThatThrownBy(() -> warehouseService.updateWarehouse(warehouseId, requestRestDTO))
         .hasMessage(WarehouseService.warehouseNotFoundMessage(warehouseId));
   }
