@@ -1,6 +1,5 @@
 package com.vetrikos.inventory.system.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -56,9 +55,7 @@ public class Warehouse {
     @ToString.Exclude
     private List<Order> receivedOrders = new ArrayList<>();
 
-    @OneToMany(mappedBy = "warehouse", fetch = FetchType.EAGER, cascade = {
-        CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH
-    })
+    @OneToMany(mappedBy = "warehouse", fetch = FetchType.EAGER)
     @Builder.Default
     @BatchSize(size = 10)
     private List<User> users = new ArrayList<>();
