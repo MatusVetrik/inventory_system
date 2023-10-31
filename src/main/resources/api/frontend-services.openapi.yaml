@@ -308,6 +308,7 @@ components:
       required:
         - id
         - capacity
+        - name
       properties:
         id:
           type: integer
@@ -315,12 +316,15 @@ components:
         capacity:
           type: integer
           format: int32
+        name:
+          type: string
 
     WarehouseRequest:
       type: object
       required:
         - capacity
         - userId
+        - name
       properties:
         capacity:
           type: integer
@@ -328,15 +332,17 @@ components:
         userId:
           type: string
           format: UUID
+        name:
+          type: string
 
     WarehouseUpdateRequest:
       type: object
-      required:
-        - capacity
       properties:
         capacity:
           type: integer
           format: int32
+        name:
+          type: string
 
 
     FullWarehouse:
@@ -358,13 +364,15 @@ components:
       required:
         - id
         - username
+        - fullName
       properties:
         id:
           type: string
           format: UUID
         username:
           type: string
-
+        fullName:
+          type: string
 
     WarehouseItem:
       type: object
