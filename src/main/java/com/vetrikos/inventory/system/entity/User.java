@@ -20,7 +20,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.proxy.HibernateProxy;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -62,28 +61,28 @@ public class User {
   }
 
   @Override
-  public final boolean equals(Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
-    if (o == null) {
+    if (!(o instanceof User user)) {
       return false;
     }
-    Class<?> oEffectiveClass = o instanceof HibernateProxy
-        ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass()
-        : o.getClass();
-    Class<?> thisEffectiveClass = this instanceof HibernateProxy
-        ? ((HibernateProxy) this).getHibernateLazyInitializer()
-        .getPersistentClass() : this.getClass();
-    if (thisEffectiveClass != oEffectiveClass) {
+
+    if (!Objects.equals(id, user.id)) {
       return false;
     }
-    User user = (User) o;
-    return getId() != null && Objects.equals(getId(), user.getId());
+    if (!username.equals(user.username)) {
+      return false;
+    }
+    return fullName.equals(user.fullName);
   }
 
   @Override
-  public final int hashCode() {
-    return getClass().hashCode();
+  public int hashCode() {
+    int result = id != null ? id.hashCode() : 0;
+    result = 31 * result + username.hashCode();
+    result = 31 * result + fullName.hashCode();
+    return result;
   }
 }

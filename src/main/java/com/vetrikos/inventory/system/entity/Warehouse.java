@@ -18,7 +18,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.BatchSize;
-import org.hibernate.proxy.HibernateProxy;
 
 
 @AllArgsConstructor
@@ -42,7 +41,6 @@ public class Warehouse {
 
     @OneToMany(mappedBy = "warehouse", fetch = FetchType.EAGER)
     @Builder.Default
-    @ToString.Exclude
     private List<ItemListEntry> entries = new ArrayList<>();
 
     @OneToMany(mappedBy = "fromWarehouse", fetch = FetchType.EAGER)
@@ -61,28 +59,28 @@ public class Warehouse {
     private List<User> users = new ArrayList<>();
 
     @Override
-    public final boolean equals(Object o) {
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (o == null) {
+        if (!(o instanceof Warehouse warehouse)) {
             return false;
         }
-        Class<?> oEffectiveClass = o instanceof HibernateProxy
-            ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass()
-            : o.getClass();
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy
-            ? ((HibernateProxy) this).getHibernateLazyInitializer()
-            .getPersistentClass() : this.getClass();
-        if (thisEffectiveClass != oEffectiveClass) {
+
+        if (!Objects.equals(id, warehouse.id)) {
             return false;
         }
-        Warehouse warehouse = (Warehouse) o;
-        return getId() != null && Objects.equals(getId(), warehouse.getId());
+        if (!capacity.equals(warehouse.capacity)) {
+            return false;
+        }
+        return name.equals(warehouse.name);
     }
 
     @Override
-    public final int hashCode() {
-        return getClass().hashCode();
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + capacity.hashCode();
+        result = 31 * result + name.hashCode();
+        return result;
     }
 }
