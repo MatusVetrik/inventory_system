@@ -16,7 +16,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.proxy.HibernateProxy;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -42,29 +41,33 @@ public class Item {
   private List<ItemListEntry> entries = new ArrayList<>();
 
   @Override
-  public final boolean equals(Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
-    if (o == null) {
+    if (!(o instanceof Item item)) {
       return false;
     }
-    Class<?> oEffectiveClass = o instanceof HibernateProxy
-        ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass()
-        : o.getClass();
-    Class<?> thisEffectiveClass = this instanceof HibernateProxy
-        ? ((HibernateProxy) this).getHibernateLazyInitializer()
-        .getPersistentClass() : this.getClass();
-    if (thisEffectiveClass != oEffectiveClass) {
+
+    if (!Objects.equals(id, item.id)) {
       return false;
     }
-    Item item = (Item) o;
-    return getId() != null && Objects.equals(getId(), item.getId());
+    if (!name.equals(item.name)) {
+      return false;
+    }
+    if (!size.equals(item.size)) {
+      return false;
+    }
+    return Objects.equals(entries, item.entries);
   }
 
   @Override
-  public final int hashCode() {
-    return getClass().hashCode();
+  public int hashCode() {
+    int result = id != null ? id.hashCode() : 0;
+    result = 31 * result + name.hashCode();
+    result = 31 * result + size.hashCode();
+    result = 31 * result + (entries != null ? entries.hashCode() : 0);
+    return result;
   }
 
   @Override
