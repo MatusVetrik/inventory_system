@@ -7,7 +7,7 @@ on:
 
 env:
   JAVA_VERSION: 21
-  JAVA_DISTRIBUTION: 'openjdk'
+  JAVA_DISTRIBUTION: 'adopt'
 
 jobs:
   build:
