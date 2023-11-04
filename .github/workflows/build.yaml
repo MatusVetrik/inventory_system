@@ -7,7 +7,7 @@ on:
 
 env:
   JAVA_VERSION: 21
-  JAVA_DISTRIBUTION: 'adopt'
+  JAVA_DISTRIBUTION: 'oracle'
 
 jobs:
   build:
@@ -18,11 +18,18 @@ jobs:
       - name: Check Out Code
         uses: actions/checkout@v3
 
-      - name: Set up JDK $JAVA_VERSION
-        uses: actions/setup-java@v3
+      - name: Set up latest Oracle JDK 21
+        uses: oracle-actions/setup-java@v1
         with:
-          java-version: $JAVA_VERSION
-          distribution: $JAVA_DISTRIBUTION
+          website: oracle.com
+          release: $JAVA_VERSION
+
+#      - name: Set up JDK $JAVA_VERSION
+#        uses: actions/setup-java@v3
+#        with:
+#          java-version: $JAVA_VERSION
+#          distribution: $JAVA_DISTRIBUTION
+#          cache: 'maven'
 
       - name: Build with Maven
         run: mvn clean install
