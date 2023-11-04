@@ -1,7 +1,9 @@
 package com.vetrikos.inventory.system.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,7 +33,9 @@ public class ItemListEntry {
   @Column(nullable = false)
   private Integer quantity;
 
-  @ManyToOne()
+  @ManyToOne(cascade = {
+      CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH
+  }, fetch = FetchType.EAGER)
   @JoinColumn(name = "item_id")
   private Item item;
 
@@ -39,7 +43,9 @@ public class ItemListEntry {
   @JoinColumn(name = "order_id")
   private Order order;
 
-  @ManyToOne()
+  @ManyToOne(cascade = {
+      CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH
+  })
   @JoinColumn(name = "warehouse_id")
   private Warehouse warehouse;
 
