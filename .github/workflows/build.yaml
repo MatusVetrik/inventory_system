@@ -7,6 +7,7 @@ on:
 
 env:
   JAVA_VERSION: 21
+  JAVA_DISTRIBUTION: 'openjdk'
 
 jobs:
   build:
@@ -21,6 +22,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: $JAVA_VERSION
+          distribution: $JAVA_DISTRIBUTION
 
       - name: Build with Maven
         run: mvn clean install
