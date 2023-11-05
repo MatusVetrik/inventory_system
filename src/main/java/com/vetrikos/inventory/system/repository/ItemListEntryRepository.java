@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ItemListEntryRepository extends JpaRepository<ItemListEntry, Long> {
 
-  ItemListEntry findItemListEntryByWarehouseAndItem(Warehouse warehouse, Item item);
+  List<ItemListEntry> findItemListEntriesByWarehouseAndItem(Warehouse warehouse, Item item);
   List<ItemListEntry> findItemListEntriesByWarehouse(Warehouse warehouse);
 
 }

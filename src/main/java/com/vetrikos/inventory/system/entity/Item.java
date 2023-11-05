@@ -39,8 +39,9 @@ public class Item {
   private Integer size;
 
   @OneToMany(mappedBy = "item", fetch = FetchType.EAGER, cascade = {
-      CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH
-  })
+      CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH,
+      CascadeType.REMOVE
+  }, orphanRemoval = true)
   @Builder.Default
   private List<ItemListEntry> entries = new ArrayList<>();
 

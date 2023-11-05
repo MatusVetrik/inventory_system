@@ -10,7 +10,10 @@ import com.vetrikos.inventory.system.repository.ItemRepository;
 import com.vetrikos.inventory.system.repository.WarehouseRepository;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
@@ -55,17 +58,36 @@ public class ItemServiceImpl implements ItemService {
       return new ArrayList<>();
     }
 
-    List<Item> itemsInWarehouse = new ArrayList<>();
+    Set<Item> itemsInWarehouse = new HashSet<>();
     for (ItemListEntry itemListEntry : itemListEntries
     ) {
       itemsInWarehouse.add(itemListEntry.getItem());
     }
 
-    return itemsInWarehouse;
+    return new ArrayList<>(itemsInWarehouse);
+  }
+
+  @Override
+  public Item findItemInWarehouse(Long warehouseId, Long itemId) {
+    Item item = itemRepository.findById(itemId)
+        .orElseThrow(() -> new IllegalArgumentException(
+            ItemService.itemNotFoundMessage(itemId)));
+    Warehouse warehouse = warehouseRepository.findById(warehouseId)
+        .orElseThrow(() -> new IllegalArgumentException(
+            WarehouseService.warehouseNotFoundMessage(warehouseId)));
+    List<ItemListEntry> existingItem = itemListEntryRepository.findItemListEntriesByWarehouseAndItem(
+        warehouse, item);
+    if (existingItem.isEmpty()) {
+      throw new IllegalArgumentException(
+          ItemListEntryService.itemInWarehouseNotFoundMessage(itemId, warehouseId));
+    }
+
+    return existingItem.get(0).getItem();
   }
 
   @NonNull
   @Override
+  @Transactional
   public Item createItem(Long warehouseId, WarehouseItemRestDTO requestRestDTO) {
     Warehouse warehouse = warehouseRepository.findById(warehouseId)
         .orElseThrow(() -> new IllegalArgumentException(
@@ -75,13 +97,14 @@ public class ItemServiceImpl implements ItemService {
     newItem.setName(requestRestDTO.getName());
     newItem.setSize(requestRestDTO.getSize());
 
-    // newItem = itemRepository.save(newItem);
     ItemListEntry itemListEntry = ItemListEntry.builder().item(newItem).warehouse(warehouse)
         .quantity(
             requestRestDTO.getQuantity()).build();
     newItem.setEntries(new ArrayList<>(List.of(itemListEntry)));
-
-    return itemRepository.save(newItem);
+    Item savedItem = itemRepository.save(newItem);
+    itemListEntry = itemListEntryRepository.save(itemListEntry);
+    warehouse = warehouseRepository.save(warehouse);
+    return savedItem;
   }
 
   @NonNull
@@ -91,20 +114,20 @@ public class ItemServiceImpl implements ItemService {
       WarehouseItemRequestRestDTO updateRequestRestDTO) {
     Warehouse warehouse = warehouseRepository.findById(warehouseId)
         .orElseThrow(() -> new IllegalArgumentException(
-
             WarehouseService.warehouseNotFoundMessage(warehouseId)));
     Item item = itemRepository.findById(itemId)
         .orElseThrow(() -> new IllegalArgumentException(
             ItemService.itemNotFoundMessage(itemId)));
 
-    ItemListEntry existingItem = itemListEntryRepository.findItemListEntryByWarehouseAndItem(
+    List<ItemListEntry> existingItem = itemListEntryRepository.findItemListEntriesByWarehouseAndItem(
         warehouse, item);
-    //existingItem.setQuantity(updateRequestRestDTO.ge);
-    Item itemInWarehouse = existingItem.getItem();
+    if (existingItem.isEmpty()) {
+      throw new IllegalArgumentException(
+          ItemListEntryService.itemInWarehouseNotFoundMessage(itemId, warehouseId));
+    }
+    Item itemInWarehouse = existingItem.get(0).getItem();
     itemInWarehouse.setName(updateRequestRestDTO.getName());
     itemInWarehouse.setSize(updateRequestRestDTO.getSize());
-
-    // Update other properties if needed
 
     return itemRepository.save(itemInWarehouse);
   }
@@ -118,4 +141,32 @@ public class ItemServiceImpl implements ItemService {
 
     itemRepository.delete(existingItem);
   }
+
+  @Override
+  @Transactional
+  public void deleteWarehouseItem(Long itemId, Long warehouseId) {
+    Item item = itemRepository.findById(itemId)
+        .orElseThrow(() -> new IllegalArgumentException(
+            ItemService.itemNotFoundMessage(itemId)));
+    Warehouse warehouse = warehouseRepository.findById(warehouseId)
+        .orElseThrow(() -> new IllegalArgumentException(
+            WarehouseService.warehouseNotFoundMessage(warehouseId)));
+    List<ItemListEntry> existingItem = itemListEntryRepository.findItemListEntriesByWarehouseAndItem(
+        warehouse, item);
+    if (existingItem.isEmpty()) {
+      throw new IllegalArgumentException(
+          ItemListEntryService.itemInWarehouseNotFoundMessage(itemId, warehouseId));
+    }
+    for (ItemListEntry entry : existingItem) {
+      if (Objects.equals(entry.getWarehouse().getId(), warehouseId)) {
+        entry.setWarehouse(null);
+        entry.setOrder(null);
+        itemListEntryRepository.delete(entry);
+      }
+    }
+
+
+  }
+
+
 }

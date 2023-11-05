@@ -1,6 +1,7 @@
 package com.vetrikos.inventory.system.controller;
 
 import com.vetrikos.inventory.system.api.WarehouseItemsApi;
+import com.vetrikos.inventory.system.entity.Item;
 import com.vetrikos.inventory.system.mapper.ItemMapper;
 import com.vetrikos.inventory.system.model.WarehouseItemRequestRestDTO;
 import com.vetrikos.inventory.system.model.WarehouseItemRestDTO;
@@ -22,32 +23,39 @@ public class WarehouseItemController implements WarehouseItemsApi {
 
   @Override
   public ResponseEntity<WarehouseItemRestDTO> createWarehouseItem(Long warehouseId,
-      WarehouseItemRequestRestDTO warehouseItemRequestRestDTO) {
-    return WarehouseItemsApi.super.createWarehouseItem(warehouseId, warehouseItemRequestRestDTO);
+      WarehouseItemRequestRestDTO WarehouseItemRequestRestDTO) {
+    // TODO: need quantity in WarehouseItemRequestRestDTO
+    return null;
   }
 
   @Override
   public ResponseEntity<Void> deleteWarehouseItem(Long warehouseId, Long itemId) {
-    return WarehouseItemsApi.super.deleteWarehouseItem(warehouseId, itemId);
+    itemService.deleteWarehouseItem(itemId, warehouseId);
+    return ResponseEntity.noContent().build();
   }
 
   @Override
   public ResponseEntity<WarehouseItemRestDTO> getWarehouseItemById(Long warehouseId, Long itemId) {
-    return WarehouseItemsApi.super.getWarehouseItemById(warehouseId, itemId);
+    Item item = itemService.findItemInWarehouse(warehouseId, itemId);
+    WarehouseItemRestDTO warehouseItemDTO = itemMapper.itemToWarehouseItemRestDTO(item);
+    return ResponseEntity.ok(warehouseItemDTO);
   }
 
   @Override
   public ResponseEntity<List<WarehouseItemRestDTO>> listWarehouseItems(Long warehouseId) {
-    return ResponseEntity.ok(
-        itemService.findItemsInWarehouse(warehouseId).stream()
-            .map(itemMapper::itemToWarehouseItemRestDTO).collect(
-                Collectors.toList()));
+    List<Item> items = itemService.findItemsInWarehouse(warehouseId);
+    List<WarehouseItemRestDTO> warehouseItemDTOs = items.stream()
+        .map(itemMapper::itemToWarehouseItemRestDTO)
+        .collect(Collectors.toList());
+    return ResponseEntity.ok(warehouseItemDTOs);
   }
 
   @Override
   public ResponseEntity<WarehouseItemRestDTO> updateWarehouseItem(Long warehouseId, Long itemId,
       WarehouseItemRequestRestDTO warehouseItemRequestRestDTO) {
-    return WarehouseItemsApi.super.updateWarehouseItem(warehouseId, itemId,
-        warehouseItemRequestRestDTO);
+    // Updating an item in the warehouse
+    Item updatedItem = itemService.updateItem(itemId, warehouseId, warehouseItemRequestRestDTO);
+    WarehouseItemRestDTO updatedItemDTO = itemMapper.itemToWarehouseItemRestDTO(updatedItem);
+    return ResponseEntity.ok(updatedItemDTO);
   }
 }

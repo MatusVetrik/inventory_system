@@ -34,7 +34,7 @@ public class ItemListEntry {
   private Integer quantity;
 
   @ManyToOne(cascade = {
-      CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH
+      CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH
   }, fetch = FetchType.EAGER)
   @JoinColumn(name = "item_id")
   private Item item;
@@ -44,7 +44,7 @@ public class ItemListEntry {
   private Order order;
 
   @ManyToOne(cascade = {
-      CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH
+      CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH
   })
   @JoinColumn(name = "warehouse_id")
   private Warehouse warehouse;
