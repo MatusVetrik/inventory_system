@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  JAVA_VERSION: 21
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check Out Code
+        uses: actions/checkout@v3
+
+      - name: Set up latest Oracle JDK 21
+        uses: oracle-actions/setup-java@v1
+        with:
+          website: oracle.com
+          release: $JAVA_VERSION
+
+      - name: Build and install with Maven
+        run: mvn clean install
