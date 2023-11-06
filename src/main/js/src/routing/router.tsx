@@ -6,6 +6,7 @@ import IntroPage from "../pages/IntroPage/IntroPage";
 import OrdersPage from "../pages/OrdersPage/OrdersPage";
 import ProfilePage from "../pages/ProfilePage/ProfilePage";
 import WarehousesPage from "../pages/WarehousesPage/WarehousesPage";
+import WarehousePage from "../pages/WarehousePage/WarehousePage";
 import ItemsPage from "../pages/ItemsPage/ItemsPage";
 
 const Router = (): ReactElement => (
@@ -15,6 +16,7 @@ const Router = (): ReactElement => (
         <Route path={routes.orders} element={<OrdersPage/>}/>
         <Route path={routes.profile} element={<ProfilePage/>}/>
         <Route path={routes.warehouses} element={<WarehousesPage/>}/>
+        <Route path={routes.warehouse} element={<WarehousePage/>}/>
         <Route path={routes.items} element={<ItemsPage/>}/>
 
     </Routes>
