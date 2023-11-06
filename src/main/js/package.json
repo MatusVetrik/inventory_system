@@ -15,6 +15,8 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.13",
     "@mui/material": "^5.14.13",
+    "@mui/x-data-grid": "^6.17.0",
+    "@mui/x-data-grid-generator": "^6.17.0",
     "@openapitools/openapi-generator-cli": "^2.7.0",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.1",
