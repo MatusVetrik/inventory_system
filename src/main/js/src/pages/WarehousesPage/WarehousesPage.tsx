@@ -1,4 +1,3 @@
-import * as React from "react";
 import {DataGrid, GridRowParams, GridToolbar} from '@mui/x-data-grid';
 import routes from "../../routing/routes";
 import {useNavigate} from "react-router-dom";
@@ -6,15 +5,15 @@ import {useNavigate} from "react-router-dom";
 const columns = [
     {field: 'id', headerName: 'ID', width: 100},
     {field: 'capacity', headerName: 'Capacity', width: 200},
-    {field: 'location', headerName: 'Location', width: 200},
+    {field: 'name', headerName: 'Name', width: 200},
 ];
 
 function createData(
     id: number,
     capacity: number,
-    location: string
+    name: string
 ) {
-    return {id: id, capacity: capacity, location: location};
+    return {id: id, capacity: capacity, name: name};
 }
 
 const rows = [
@@ -45,8 +44,6 @@ const WarehousePage = () => {
                 onRowClick={(row) => handleRowClick(row)}
                 style={{cursor: 'pointer'}}
                 rowHeight={35}
-                headerHeight={40}
-
             />
         </div>
 
