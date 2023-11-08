@@ -23,8 +23,8 @@ public class WarehouseItemController implements WarehouseItemsApi {
 
   @Override
   public ResponseEntity<WarehouseItemRestDTO> createWarehouseItem(Long warehouseId,
-      WarehouseItemRequestRestDTO WarehouseItemRequestRestDTO) {
-    // TODO: need quantity in WarehouseItemRequestRestDTO
+      WarehouseItemRequestRestDTO warehouseItemRequestRestDTO) {
+    Item item = itemService.createItem(warehouseId,warehouseItemRequestRestDTO);
     return null;
   }
 

@@ -4,7 +4,6 @@ import com.vetrikos.inventory.system.entity.Item;
 import com.vetrikos.inventory.system.entity.ItemListEntry;
 import com.vetrikos.inventory.system.entity.Warehouse;
 import com.vetrikos.inventory.system.model.WarehouseItemRequestRestDTO;
-import com.vetrikos.inventory.system.model.WarehouseItemRestDTO;
 import com.vetrikos.inventory.system.repository.ItemListEntryRepository;
 import com.vetrikos.inventory.system.repository.ItemRepository;
 import com.vetrikos.inventory.system.repository.WarehouseRepository;
@@ -88,7 +87,7 @@ public class ItemServiceImpl implements ItemService {
   @NonNull
   @Override
   @Transactional
-  public Item createItem(Long warehouseId, WarehouseItemRestDTO requestRestDTO) {
+  public Item createItem(Long warehouseId, WarehouseItemRequestRestDTO requestRestDTO) {
     Warehouse warehouse = warehouseRepository.findById(warehouseId)
         .orElseThrow(() -> new IllegalArgumentException(
             WarehouseService.warehouseNotFoundMessage(warehouseId)));

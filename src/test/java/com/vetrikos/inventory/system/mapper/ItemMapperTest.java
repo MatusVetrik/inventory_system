@@ -46,7 +46,8 @@ class ItemMapperTest {
   void warehouseItemRequestRestDTOToItem() {
     int size = 500;
     String name = "Apple";
-    WarehouseItemRequestRestDTO requestRestDTO = new WarehouseItemRequestRestDTO(name, size);
+    int quantity = 5;
+    WarehouseItemRequestRestDTO requestRestDTO = new WarehouseItemRequestRestDTO(name, size, quantity);
     Item expectedItem = Item.builder()
         .name(name)
         .size(size)

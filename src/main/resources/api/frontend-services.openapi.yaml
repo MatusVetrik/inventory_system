@@ -406,6 +406,8 @@ components:
           type: string
         size:
           type: integer
+        quantity:
+          type: integer
 
     BadRequest:
       type: object

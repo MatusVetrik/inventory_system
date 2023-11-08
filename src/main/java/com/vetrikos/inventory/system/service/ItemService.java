@@ -2,7 +2,6 @@ package com.vetrikos.inventory.system.service;
 
 import com.vetrikos.inventory.system.entity.Item;
 import com.vetrikos.inventory.system.model.WarehouseItemRequestRestDTO;
-import com.vetrikos.inventory.system.model.WarehouseItemRestDTO;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import org.springframework.lang.NonNull;
@@ -24,7 +23,7 @@ public interface ItemService {
   @NonNull
   Item findItemInWarehouse(@NotNull Long warehouseId,@NotNull Long itemId);
   @NonNull
-  Item createItem(@NotNull Long warehouseId, @NotNull WarehouseItemRestDTO requestRestDTO);
+  Item createItem(@NotNull Long warehouseId, @NotNull WarehouseItemRequestRestDTO requestRestDTO);
 
   @NonNull
   Item updateItem(@NotNull Long itemId, @NotNull Long warehouseId,

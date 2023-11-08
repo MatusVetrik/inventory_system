@@ -9,7 +9,6 @@ import com.vetrikos.inventory.system.entity.ItemListEntry;
 import com.vetrikos.inventory.system.entity.User;
 import com.vetrikos.inventory.system.entity.Warehouse;
 import com.vetrikos.inventory.system.model.WarehouseItemRequestRestDTO;
-import com.vetrikos.inventory.system.model.WarehouseItemRestDTO;
 import com.vetrikos.inventory.system.repository.ItemListEntryRepository;
 import com.vetrikos.inventory.system.repository.ItemRepository;
 import com.vetrikos.inventory.system.repository.UserRepository;
@@ -161,7 +160,7 @@ public class ItemServiceImplIT {
   @Test
   void shouldCreateItemInWarehouse() {
     warehouse = warehouseRepository.save(warehouse);
-    WarehouseItemRestDTO warehouseItemRestDTO = new WarehouseItemRestDTO();
+    WarehouseItemRequestRestDTO warehouseItemRestDTO = new WarehouseItemRequestRestDTO();
     String name = "item";
     warehouseItemRestDTO.setName(name);
     warehouseItemRestDTO.setQuantity(50);
@@ -180,16 +179,17 @@ public class ItemServiceImplIT {
   @Test
   void shouldUpdateItemInWarehouse() {
     warehouse = warehouseRepository.save(warehouse);
-    WarehouseItemRestDTO warehouseItemRestDTO = new WarehouseItemRestDTO();
+    WarehouseItemRequestRestDTO warehouseItemRestDTO = new WarehouseItemRequestRestDTO();
     String name = "item";
     warehouseItemRestDTO.setName(name);
     warehouseItemRestDTO.setQuantity(50);
     warehouseItemRestDTO.setSize(50);
     Item createdItem = itemService.createItem(warehouse.getId(), warehouseItemRestDTO);
     String newName = "itemNew";
+    Integer newQuantity = 50;
     Integer newSize = 80;
     WarehouseItemRequestRestDTO warehouseItemRequestRestDTO = new WarehouseItemRequestRestDTO(
-        newName, newSize);
+        newName, newSize, newQuantity );
 
     Item updatedItem = itemService.updateItem(createdItem.getId(), warehouse.getId(),
         warehouseItemRequestRestDTO);
@@ -204,11 +204,9 @@ public class ItemServiceImplIT {
   @Test
   void shouldDeleteItemInWarehouse() {
     warehouse = warehouseRepository.save(warehouse);
-    WarehouseItemRestDTO warehouseItemRestDTO = new WarehouseItemRestDTO();
     String name = "item";
-    warehouseItemRestDTO.setName(name);
-    warehouseItemRestDTO.setQuantity(50);
-    warehouseItemRestDTO.setSize(50);
+    WarehouseItemRequestRestDTO warehouseItemRestDTO = new WarehouseItemRequestRestDTO(name, 50,50);
+
     Item createdItem = itemService.createItem(warehouse.getId(), warehouseItemRestDTO);
 
     itemService.deleteItem(createdItem.getId());
