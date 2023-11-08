@@ -29,58 +29,59 @@ import org.hibernate.annotations.BatchSize;
 @Entity
 @Table(name = "WAREHOUSES")
 public class Warehouse {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
 
-    @Column(nullable = false)
-    private Integer capacity;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long id;
 
-    @Column(nullable = false)
-    private String name;
+  @Column(nullable = false)
+  private Integer capacity;
 
-    @OneToMany(mappedBy = "warehouse", fetch = FetchType.EAGER)
-    @Builder.Default
-    private List<ItemListEntry> entries = new ArrayList<>();
+  @Column(nullable = false)
+  private String name;
 
-    @OneToMany(mappedBy = "fromWarehouse", fetch = FetchType.EAGER)
-    @Builder.Default
-    @ToString.Exclude
-    private List<Order> sendOrders = new ArrayList<>();
+  @OneToMany(mappedBy = "warehouse", fetch = FetchType.EAGER)
+  @Builder.Default
+  private List<ItemListEntry> entries = new ArrayList<>();
 
-    @OneToMany(mappedBy = "toWarehouse", fetch = FetchType.EAGER)
-    @Builder.Default
-    @ToString.Exclude
-    private List<Order> receivedOrders = new ArrayList<>();
+  @OneToMany(mappedBy = "fromWarehouse", fetch = FetchType.EAGER)
+  @Builder.Default
+  @ToString.Exclude
+  private List<Order> sendOrders = new ArrayList<>();
 
-    @OneToMany(mappedBy = "warehouse", fetch = FetchType.EAGER)
-    @Builder.Default
-    @BatchSize(size = 10)
-    private List<User> users = new ArrayList<>();
+  @OneToMany(mappedBy = "toWarehouse", fetch = FetchType.EAGER)
+  @Builder.Default
+  @ToString.Exclude
+  private List<Order> receivedOrders = new ArrayList<>();
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Warehouse warehouse)) {
-            return false;
-        }
+  @OneToMany(mappedBy = "warehouse", fetch = FetchType.EAGER)
+  @Builder.Default
+  @BatchSize(size = 10)
+  private List<User> users = new ArrayList<>();
 
-        if (!Objects.equals(id, warehouse.id)) {
-            return false;
-        }
-        if (!capacity.equals(warehouse.capacity)) {
-            return false;
-        }
-        return name.equals(warehouse.name);
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof Warehouse warehouse)) {
+      return false;
     }
 
-    @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + capacity.hashCode();
-        result = 31 * result + name.hashCode();
-        return result;
+    if (!Objects.equals(id, warehouse.id)) {
+      return false;
     }
+    if (!capacity.equals(warehouse.capacity)) {
+      return false;
+    }
+    return name.equals(warehouse.name);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = id != null ? id.hashCode() : 0;
+    result = 31 * result + capacity.hashCode();
+    result = 31 * result + name.hashCode();
+    return result;
+  }
 }

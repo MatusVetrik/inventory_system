@@ -1,8 +1,10 @@
 package com.vetrikos.inventory.system.entity;
 
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -36,7 +38,10 @@ public class Item {
   @Column(nullable = false)
   private Integer size;
 
-  @OneToMany(mappedBy = "item")
+  @OneToMany(mappedBy = "item", fetch = FetchType.EAGER, cascade = {
+      CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH,
+      CascadeType.REMOVE
+  }, orphanRemoval = true)
   @Builder.Default
   private List<ItemListEntry> entries = new ArrayList<>();
 
@@ -55,10 +60,7 @@ public class Item {
     if (!name.equals(item.name)) {
       return false;
     }
-    if (!size.equals(item.size)) {
-      return false;
-    }
-    return Objects.equals(entries, item.entries);
+    return size.equals(item.size);
   }
 
   @Override

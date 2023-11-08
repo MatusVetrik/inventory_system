@@ -65,6 +65,9 @@ class WarehouseServiceImplIT {
 
     List<Warehouse> result = warehouseService.findAll();
 
+    System.out.println(result);
+    System.out.println(warehouse.toString());
+
     assertThat(result).isNotEmpty()
         .hasSize(1)
         .containsExactlyInAnyOrder(warehouse);
