@@ -97,9 +97,8 @@ class WarehouseMapperTest {
   @Test
   void warehouseRequestRestDTOToWarehouse() {
     int capacity = 500;
-    UUID userId = UUID.randomUUID();
     String name = "Lidl warehouse";
-    WarehouseRequestRestDTO requestRestDTO = new WarehouseRequestRestDTO(capacity, userId, name);
+    WarehouseRequestRestDTO requestRestDTO = new WarehouseRequestRestDTO(capacity, name);
     Warehouse expectedResult = Warehouse.builder()
         .name(name)
         .capacity(capacity)

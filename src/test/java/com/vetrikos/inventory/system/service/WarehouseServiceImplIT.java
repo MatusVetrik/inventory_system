@@ -11,7 +11,6 @@ import com.vetrikos.inventory.system.model.WarehouseUpdateRequestRestDTO;
 import com.vetrikos.inventory.system.repository.UserRepository;
 import com.vetrikos.inventory.system.repository.WarehouseRepository;
 import java.util.List;
-import java.util.UUID;
 import org.junit.ClassRule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -101,8 +100,7 @@ class WarehouseServiceImplIT {
 
     int capacity = 100;
     String warehouseName = "Lidl warehouse";
-    WarehouseRequestRestDTO requestRestDTO = new WarehouseRequestRestDTO(capacity,
-        sampleUser.getId(), warehouseName);
+    WarehouseRequestRestDTO requestRestDTO = new WarehouseRequestRestDTO(capacity, warehouseName);
 
     Warehouse result = warehouseService.createWarehouse(requestRestDTO);
 
@@ -110,20 +108,12 @@ class WarehouseServiceImplIT {
         .id(result.getId())
         .capacity(capacity)
         .name(warehouseName)
-        .users(List.of(sampleUser))
+//        .users(List.of(sampleUser))
         .build();
 
     assertThat(result).isNotNull()
         .isEqualTo(expectedWarehouse);
     assertThat(warehouseRepository.findAll().size()).isOne();
-  }
-
-  @Test
-  void createWarehouseShouldThrowException() {
-    UUID userId = UUID.randomUUID();
-    WarehouseRequestRestDTO requestRestDTO = new WarehouseRequestRestDTO(100, userId, "Name");
-    assertThatThrownBy(() -> warehouseService.createWarehouse(requestRestDTO))
-        .hasMessage(UserService.userNotFoundMessage(userId));
   }
 
   @Test

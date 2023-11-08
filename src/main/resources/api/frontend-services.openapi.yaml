@@ -323,15 +323,11 @@ components:
       type: object
       required:
         - capacity
-        - userId
         - name
       properties:
         capacity:
           type: integer
           format: int32
-        userId:
-          type: string
-          format: UUID
         name:
           type: string
 
