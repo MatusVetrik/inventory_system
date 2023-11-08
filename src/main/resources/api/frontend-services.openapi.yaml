@@ -344,7 +344,6 @@ components:
         name:
           type: string
 
-
     FullWarehouse:
       allOf:
         - $ref: "#/components/schemas/BasicWarehouse"
@@ -400,10 +399,13 @@ components:
       required:
         - name
         - size
+        - quantity
       properties:
         name:
           type: string
         size:
+          type: integer
+        quantity:
           type: integer
 
     BadRequest:
@@ -424,6 +426,7 @@ components:
               message:
                 type: string
                 maxLength: 500
+
     Error:
       type: object
       required:

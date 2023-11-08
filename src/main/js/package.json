@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "generate-client": "openapi-generator-cli generate -i ../resources/api/frontend-services.openapi.yaml -g typescript-axios -o ../generated-js/anon-client -p npmName=anon-client-ts-axios -p npmVersion=1.0.0 -p supportsES6=true",
+    "generate-client": "openapi-generator-cli generate -i ../resources/api/frontend-services.openapi.yaml -g typescript-axios -o ./generated-js/inventory-client -p npmName=inventory-client-ts-axios -p npmVersion=1.0.0 -p supportsES6=true",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -17,7 +17,8 @@
     "@mui/material": "^5.14.13",
     "@mui/x-data-grid": "^6.17.0",
     "@mui/x-data-grid-generator": "^6.17.0",
-    "@openapitools/openapi-generator-cli": "^2.7.0",
+    "axios": "^0.27.2",
+    "inventory-client-ts-axios": "file:generated-js/inventory-client",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.1",
     "react": "^18.2.0",
@@ -26,11 +27,13 @@
     "sort-by": "^1.2.0"
   },
   "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.7.0",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "@vitejs/plugin-react": "^4.0.3",
+    "dotenv": "^16.3.1",
     "eslint": "^8.45.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
