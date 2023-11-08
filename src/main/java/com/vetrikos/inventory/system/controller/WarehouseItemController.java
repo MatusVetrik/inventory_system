@@ -9,6 +9,7 @@ import com.vetrikos.inventory.system.service.ItemService;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,8 +25,9 @@ public class WarehouseItemController implements WarehouseItemsApi {
   @Override
   public ResponseEntity<WarehouseItemRestDTO> createWarehouseItem(Long warehouseId,
       WarehouseItemRequestRestDTO warehouseItemRequestRestDTO) {
-    Item item = itemService.createItem(warehouseId,warehouseItemRequestRestDTO);
-    return null;
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(itemMapper.itemToWarehouseItemRestDTO(
+            itemService.createItem(warehouseId,warehouseItemRequestRestDTO)));
   }
 
   @Override
@@ -53,7 +55,6 @@ public class WarehouseItemController implements WarehouseItemsApi {
   @Override
   public ResponseEntity<WarehouseItemRestDTO> updateWarehouseItem(Long warehouseId, Long itemId,
       WarehouseItemRequestRestDTO warehouseItemRequestRestDTO) {
-    // Updating an item in the warehouse
     Item updatedItem = itemService.updateItem(itemId, warehouseId, warehouseItemRequestRestDTO);
     WarehouseItemRestDTO updatedItemDTO = itemMapper.itemToWarehouseItemRestDTO(updatedItem);
     return ResponseEntity.ok(updatedItemDTO);

@@ -66,6 +66,7 @@ public class ItemServiceImpl implements ItemService {
     return new ArrayList<>(itemsInWarehouse);
   }
 
+  @NonNull
   @Override
   public Item findItemInWarehouse(Long warehouseId, Long itemId) {
     Item item = itemRepository.findById(itemId)
