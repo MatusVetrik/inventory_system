@@ -91,8 +91,7 @@ class WarehouseControllerIT {
 
     User user = userRepository.save(sampleUser);
 
-    WarehouseRequestRestDTO requestDTO = new WarehouseRequestRestDTO(warehouseCapacity,
-        user.getId(), warehouseName);
+    WarehouseRequestRestDTO requestDTO = new WarehouseRequestRestDTO(warehouseCapacity, warehouseName);
 
     MvcResult mvcResult = mockMvc.perform(post(WAREHOUSE_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
@@ -111,14 +110,14 @@ class WarehouseControllerIT {
     assertThat(result.getId()).isNotNull();
     assertThat(result.getCapacity()).isEqualTo(warehouseCapacity);
     assertThat(result.getName()).isEqualTo(warehouseName);
-    assertThat(result.getUsers()).hasSize(1);
+//    assertThat(result.getUsers()).hasSize(1);
 
     // assert saved entities
     assertThat(savedWarehouse).isPresent();
-    assertThat(savedWarehouse.get().getUsers()).isNotEmpty()
-        .usingRecursiveFieldByFieldElementComparator().contains(user);
-    assertThat(user.getWarehouse()).usingRecursiveComparison()
-        .isEqualTo(savedWarehouse.get());
+//    assertThat(savedWarehouse.get().getUsers()).isNotEmpty()
+//        .usingRecursiveFieldByFieldElementComparator().contains(user);
+//    assertThat(user.getWarehouse()).usingRecursiveComparison()
+//        .isEqualTo(savedWarehouse.get());
   }
 
   @Test

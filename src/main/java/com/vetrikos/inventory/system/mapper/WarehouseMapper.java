@@ -15,7 +15,6 @@ public interface WarehouseMapper {
   @Mapping(target = "items", source = "entries")
   FullWarehouseRestDTO warehouseToFullWarehouseRestDTO(Warehouse warehouse);
 
-  @Mapping(source = "userId", target = "users", ignore = true)
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "entries", ignore = true)
   @Mapping(target = "receivedOrders", ignore = true)
