@@ -1,10 +1,8 @@
 package com.vetrikos.inventory.system.service;
 
-import com.vetrikos.inventory.system.entity.User;
 import com.vetrikos.inventory.system.entity.Warehouse;
 import com.vetrikos.inventory.system.model.WarehouseRequestRestDTO;
 import com.vetrikos.inventory.system.model.WarehouseUpdateRequestRestDTO;
-import com.vetrikos.inventory.system.repository.UserRepository;
 import com.vetrikos.inventory.system.repository.WarehouseRepository;
 import java.util.List;
 import lombok.NonNull;
@@ -16,9 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class WarehouseServiceImpl implements WarehouseService {
 
-
   private final WarehouseRepository warehouseRepository;
-  private final UserRepository userRepository;
 
   @Override
   @NonNull
@@ -38,16 +34,12 @@ public class WarehouseServiceImpl implements WarehouseService {
   @NonNull
   @Transactional
   public Warehouse createWarehouse(WarehouseRequestRestDTO requestRestDTO) {
-    User user = userRepository.findById(requestRestDTO.getUserId())
-        .orElseThrow(() -> new IllegalArgumentException(
-            UserService.userNotFoundMessage(requestRestDTO.getUserId())));
+  // TODO: potom asi pridat to warehousu usera co ho vytvoril
 
     Warehouse warehouse = Warehouse.builder()
         .name(requestRestDTO.getName())
         .capacity(requestRestDTO.getCapacity())
-        .users(List.of(user))
         .build();
-    user.setWarehouse(warehouse);
     return warehouseRepository.save(warehouse);
   }
 

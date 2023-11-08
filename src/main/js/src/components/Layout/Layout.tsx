@@ -95,7 +95,9 @@ export default ({children}: Props) => {
                 >
                     <Toolbar/>
                     <Container maxWidth="lg" sx={{mt: 4, mb: 4}}>
-                        <Grid container spacing={3}>
+                        <Grid   alignItems="center"
+                                justifyContent="center"
+                                container spacing={3}>
                             <Grid item xs={12} md={8} lg={9}>
                                 {children}
                             </Grid>

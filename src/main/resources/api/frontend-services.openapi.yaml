@@ -323,15 +323,11 @@ components:
       type: object
       required:
         - capacity
-        - userId
         - name
       properties:
         capacity:
           type: integer
           format: int32
-        userId:
-          type: string
-          format: UUID
         name:
           type: string
 
@@ -343,7 +339,6 @@ components:
           format: int32
         name:
           type: string
-
 
     FullWarehouse:
       allOf:
@@ -406,6 +401,8 @@ components:
           type: string
         size:
           type: integer
+        quantity:
+          type: integer
 
     BadRequest:
       type: object
@@ -425,6 +422,7 @@ components:
               message:
                 type: string
                 maxLength: 500
+
     Error:
       type: object
       required:

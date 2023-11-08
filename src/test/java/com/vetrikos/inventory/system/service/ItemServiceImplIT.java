@@ -1,6 +1,7 @@
 package com.vetrikos.inventory.system.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertThrows;
 
 import com.vetrikos.inventory.system.config.CustomPostgreSQLContainer;
@@ -9,7 +10,6 @@ import com.vetrikos.inventory.system.entity.ItemListEntry;
 import com.vetrikos.inventory.system.entity.User;
 import com.vetrikos.inventory.system.entity.Warehouse;
 import com.vetrikos.inventory.system.model.WarehouseItemRequestRestDTO;
-import com.vetrikos.inventory.system.model.WarehouseItemRestDTO;
 import com.vetrikos.inventory.system.repository.ItemListEntryRepository;
 import com.vetrikos.inventory.system.repository.ItemRepository;
 import com.vetrikos.inventory.system.repository.UserRepository;
@@ -68,12 +68,12 @@ public class ItemServiceImplIT {
         .fullName("Sample User")
         .build();
     warehouse = Warehouse.builder()
-        .capacity(100)
+        .capacity(2800)
         .name("Warehouse")
         .users(List.of(sampleUser))
         .build();
     warehouse2 = Warehouse.builder()
-        .capacity(150)
+        .capacity(2800)
         .name("Warehouse 2")
         .users(List.of(sampleUser))
         .build();
@@ -161,7 +161,7 @@ public class ItemServiceImplIT {
   @Test
   void shouldCreateItemInWarehouse() {
     warehouse = warehouseRepository.save(warehouse);
-    WarehouseItemRestDTO warehouseItemRestDTO = new WarehouseItemRestDTO();
+    WarehouseItemRequestRestDTO warehouseItemRestDTO = new WarehouseItemRequestRestDTO();
     String name = "item";
     warehouseItemRestDTO.setName(name);
     warehouseItemRestDTO.setQuantity(50);
@@ -180,16 +180,17 @@ public class ItemServiceImplIT {
   @Test
   void shouldUpdateItemInWarehouse() {
     warehouse = warehouseRepository.save(warehouse);
-    WarehouseItemRestDTO warehouseItemRestDTO = new WarehouseItemRestDTO();
+    WarehouseItemRequestRestDTO warehouseItemRestDTO = new WarehouseItemRequestRestDTO();
     String name = "item";
     warehouseItemRestDTO.setName(name);
     warehouseItemRestDTO.setQuantity(50);
     warehouseItemRestDTO.setSize(50);
     Item createdItem = itemService.createItem(warehouse.getId(), warehouseItemRestDTO);
     String newName = "itemNew";
-    Integer newSize = 80;
+    Integer newQuantity = 10;
+    Integer newSize = 20;
     WarehouseItemRequestRestDTO warehouseItemRequestRestDTO = new WarehouseItemRequestRestDTO(
-        newName, newSize);
+        newName, newSize, newQuantity );
 
     Item updatedItem = itemService.updateItem(createdItem.getId(), warehouse.getId(),
         warehouseItemRequestRestDTO);
@@ -204,11 +205,9 @@ public class ItemServiceImplIT {
   @Test
   void shouldDeleteItemInWarehouse() {
     warehouse = warehouseRepository.save(warehouse);
-    WarehouseItemRestDTO warehouseItemRestDTO = new WarehouseItemRestDTO();
     String name = "item";
-    warehouseItemRestDTO.setName(name);
-    warehouseItemRestDTO.setQuantity(50);
-    warehouseItemRestDTO.setSize(50);
+    WarehouseItemRequestRestDTO warehouseItemRestDTO = new WarehouseItemRequestRestDTO(name, 50,50);
+
     Item createdItem = itemService.createItem(warehouse.getId(), warehouseItemRestDTO);
 
     itemService.deleteItem(createdItem.getId());
@@ -361,4 +360,40 @@ public class ItemServiceImplIT {
     Assertions.assertTrue(actualMessage.contains(expectedMessage));
   }
 
+  @Test
+  void updateItemShouldThrowException() {
+    warehouse = warehouseRepository.save(warehouse);
+
+
+    WarehouseItemRequestRestDTO warehouseItemRestDTO = new WarehouseItemRequestRestDTO();
+    String name = "item";
+    warehouseItemRestDTO.setName(name);
+    warehouseItemRestDTO.setQuantity(50);
+    warehouseItemRestDTO.setSize(50);
+    Item createdItem = itemService.createItem(warehouse.getId(), warehouseItemRestDTO);
+    int capacity = warehouse.getCapacity();
+    int currentCapacity = itemService.calculateCurrentCapacity(warehouse);
+
+    String newName = "itemNew";
+    Integer newQuantity = 29;
+    Integer newSize = 100;
+    int newItemCapacity = newQuantity * newSize;
+    WarehouseItemRequestRestDTO warehouseItemRequestRestDTO = new WarehouseItemRequestRestDTO(
+        newName, newSize, newQuantity );
+
+    assertThatThrownBy(() -> itemService.updateItem(createdItem.getId(), warehouse.getId(), warehouseItemRequestRestDTO))
+        .hasMessage(ItemService.itemExceedsCapacityMessage(currentCapacity+newItemCapacity-capacity));
+  }
+
+  @Test
+  void createItemInWarehouseShouldThrowException() {
+    warehouse = warehouseRepository.save(warehouse);
+    WarehouseItemRequestRestDTO warehouseItemRestDTO = new WarehouseItemRequestRestDTO();
+    String name = "item";
+    warehouseItemRestDTO.setName(name);
+    warehouseItemRestDTO.setQuantity(58);
+    warehouseItemRestDTO.setSize(50);
+    assertThatThrownBy(() -> itemService.createItem(warehouse.getId(), warehouseItemRestDTO))
+        .hasMessage(ItemService.itemExceedsCapacityMessage(100));
+  }
 }
