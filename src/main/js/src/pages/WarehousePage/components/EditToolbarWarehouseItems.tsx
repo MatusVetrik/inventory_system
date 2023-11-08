@@ -24,7 +24,13 @@ export default ({setRows, setRowModesModel, warehouseId}: Props): ReactElement =
         await createWarehouseItem(warehouseId, newItem);
 
         const id = randomId();
-        setRows((oldRows) => [...oldRows, {id, name: '', age: '', isNew: true}]);
+        setRows((oldRows) => [...oldRows, {
+            id,
+            name: newItem.name,
+            quantity: newItem.quantity,
+            size: newItem.size,
+            isNew: true
+        }]);
         setRowModesModel((oldModel) => ({
             ...oldModel,
             [id]: {mode: GridRowModes.Edit, fieldToFocus: 'name'},
@@ -46,7 +52,7 @@ export default ({setRows, setRowModesModel, warehouseId}: Props): ReactElement =
                     startIcon={<AddIcon/>}
                     style={{height: "30px"}}
                     onClick={handleClick}>
-                    Add record
+                    Add item
                 </Button>
             </div>
         </GridToolbarContainer>

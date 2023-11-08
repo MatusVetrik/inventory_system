@@ -1,49 +1,116 @@
-import {DataGrid, GridRowParams, GridToolbar} from '@mui/x-data-grid';
+import {DataGrid, GridRowModel, GridRowModes, GridRowModesModel, GridRowParams, GridRowsProp} from '@mui/x-data-grid';
 import routes from "../../routing/routes";
 import {useNavigate} from "react-router-dom";
+import {randomId} from "@mui/x-data-grid-generator";
+import {useState} from "react";
+import {WarehouseUpdateRequest} from "inventory-client-ts-axios";
+import {deleteWarehouse, updateWarehouse} from "../../client/warehouseClient.ts";
+import EditToolbar from "./components/EditToolBarWarehouses.tsx";
+import {handleRowEditStop, handleRowModesModelChange} from "../../functions/handlers.ts";
+import GetActions from "../../components/GetActions/GetActions.tsx";
 
-const columns = [
-    {field: 'id', headerName: 'ID', width: 100},
-    {field: 'capacity', headerName: 'Capacity', width: 200},
-    {field: 'name', headerName: 'Name', width: 200},
-];
 
-function createData(
-    id: number,
-    capacity: number,
-    name: string
-) {
-    return {id: id, capacity: capacity, name: name};
-}
-
-const rows = [
-    createData(1, 1235, "Bratislava"),
-    createData(2, 326, "Lozorno"),
-    createData(3, 1588, "Prague"),
-    createData(4, 1236, "Vienna"),
-    createData(5, 5668, "Budapest"),
-    createData(6, 84989, "Brno"),
-
+const initialRows: GridRowsProp = [
+    {id: randomId(), capacity: 1235, name: "Bratislava"},
+    {id: randomId(), capacity: 326, name: "Lozorno"},
+    {id: randomId(), capacity: 1588, name: "Prague"},
+    {id: randomId(), capacity: 1236, name: "Vienna"},
+    {id: randomId(), capacity: 5668, name: "Budapest"},
+    {id: randomId(), capacity: 84989, name: "Brno"},
 ];
 
 const WarehousePage = () => {
     const navigate = useNavigate();
+
+    const [rows, setRows] = useState(initialRows);
+    const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
+
+
+    const handleDeleteClick = (id: number) => async () => {
+        await deleteWarehouse(id);
+        setRows(rows.filter((row) => row.id !== id));
+    };
+
+    const handleCancelClick = (id: number) => () => {
+        setRowModesModel({
+            ...rowModesModel,
+            [id]: {mode: GridRowModes.View, ignoreModifications: true},
+        });
+
+        const editedRow = rows.find((row) => row.id === id);
+        if (editedRow!.isNew) {
+            setRows(rows.filter((row) => row.id !== id));
+        }
+    };
+
+    const processRowUpdate = async (newRow: GridRowModel) => {
+        const newWarehouse: WarehouseUpdateRequest = {
+            name: newRow?.name,
+            capacity: +newRow?.quantity
+        }
+        await updateWarehouse(newRow?.id, newWarehouse);
+
+        const updatedRow = {...newRow, isNew: false};
+        setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
+        return updatedRow;
+    };
 
     function handleRowClick(row: GridRowParams<any>) {
         const rowData = rows.find(r => r.id === row.id);
         navigate(routes.warehouse, {state: {rowDetails: rowData}});
     }
 
+    const columns = [
+        {
+            field: 'name',
+            headerName: 'Name',
+            width: 200,
+            editable: true,
+        },
+        {
+            field: 'capacity',
+            headerName: 'Capacity',
+            type: 'number',
+            width: 200,
+            editable: true,
+        },
+        {
+            field: 'actions',
+            type: 'actions',
+            headerName: 'Actions',
+            width: 200,
+            cellClassName: 'actions',
+            getActions: ({id}: { id: number }) => GetActions({
+                id,
+                rowModesModel,
+                setRowModesModel,
+                handleDeleteClick,
+                handleCancelClick
+            }),
+        },
+    ];
+
     return (
-        <div>
+        <div style={{height: 600, width: '100%', textAlign: 'center'}}>
             <h1>Warehouses</h1>
             <DataGrid
-                slots={{toolbar: GridToolbar}}
                 rows={rows}
                 columns={columns}
+                editMode="row"
+                rowModesModel={rowModesModel}
                 onRowClick={(row) => handleRowClick(row)}
-                style={{cursor: 'pointer'}}
+                onRowModesModelChange={(newModel) => handleRowModesModelChange(newModel, setRowModesModel)}
+                onRowEditStop={handleRowEditStop}
+                processRowUpdate={(newRow) => processRowUpdate(newRow)}
+                onProcessRowUpdateError={(error) => console.log(error)}
+                slots={{
+                    toolbar: EditToolbar,
+                }}
+                slotProps={{
+                    toolbar: {setRows, setRowModesModel},
+                }}
                 rowHeight={35}
+                autoPageSize
             />
         </div>
 
