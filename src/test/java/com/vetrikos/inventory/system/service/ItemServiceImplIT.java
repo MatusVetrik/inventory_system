@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertThrows;
 
 import com.vetrikos.inventory.system.config.CustomPostgreSQLContainer;
+import com.vetrikos.inventory.system.config.IntegrationTest;
+import com.vetrikos.inventory.system.config.InventoryKeycloakContainer;
 import com.vetrikos.inventory.system.entity.Item;
 import com.vetrikos.inventory.system.entity.ItemListEntry;
 import com.vetrikos.inventory.system.entity.User;
@@ -17,21 +19,22 @@ import com.vetrikos.inventory.system.repository.WarehouseRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.junit.ClassRule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.testcontainers.junit.jupiter.Container;
 
-@SpringBootTest
-@ActiveProfiles("test")
+@IntegrationTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class ItemServiceImplIT {
 
-  @ClassRule
+  @Container
   public static CustomPostgreSQLContainer postgreSQLContainer = CustomPostgreSQLContainer.getInstance();
+
+  @Container
+  public static InventoryKeycloakContainer keycloakContainer = InventoryKeycloakContainer.getInstance();
 
   @Autowired
   private UserRepository userRepository;
@@ -190,7 +193,7 @@ public class ItemServiceImplIT {
     Integer newQuantity = 10;
     Integer newSize = 20;
     WarehouseItemRequestRestDTO warehouseItemRequestRestDTO = new WarehouseItemRequestRestDTO(
-        newName, newSize, newQuantity );
+        newName, newSize, newQuantity);
 
     Item updatedItem = itemService.updateItem(createdItem.getId(), warehouse.getId(),
         warehouseItemRequestRestDTO);
@@ -206,7 +209,8 @@ public class ItemServiceImplIT {
   void shouldDeleteItemInWarehouse() {
     warehouse = warehouseRepository.save(warehouse);
     String name = "item";
-    WarehouseItemRequestRestDTO warehouseItemRestDTO = new WarehouseItemRequestRestDTO(name, 50,50);
+    WarehouseItemRequestRestDTO warehouseItemRestDTO = new WarehouseItemRequestRestDTO(name, 50,
+        50);
 
     Item createdItem = itemService.createItem(warehouse.getId(), warehouseItemRestDTO);
 
@@ -364,7 +368,6 @@ public class ItemServiceImplIT {
   void updateItemShouldThrowException() {
     warehouse = warehouseRepository.save(warehouse);
 
-
     WarehouseItemRequestRestDTO warehouseItemRestDTO = new WarehouseItemRequestRestDTO();
     String name = "item";
     warehouseItemRestDTO.setName(name);
@@ -379,10 +382,12 @@ public class ItemServiceImplIT {
     Integer newSize = 100;
     int newItemCapacity = newQuantity * newSize;
     WarehouseItemRequestRestDTO warehouseItemRequestRestDTO = new WarehouseItemRequestRestDTO(
-        newName, newSize, newQuantity );
+        newName, newSize, newQuantity);
 
-    assertThatThrownBy(() -> itemService.updateItem(createdItem.getId(), warehouse.getId(), warehouseItemRequestRestDTO))
-        .hasMessage(ItemService.itemExceedsCapacityMessage(currentCapacity+newItemCapacity-capacity));
+    assertThatThrownBy(() -> itemService.updateItem(createdItem.getId(), warehouse.getId(),
+        warehouseItemRequestRestDTO))
+        .hasMessage(
+            ItemService.itemExceedsCapacityMessage(currentCapacity + newItemCapacity - capacity));
   }
 
   @Test

@@ -1,8 +1,8 @@
 package com.vetrikos.inventory.system.config;
 
 
-import static com.vetrikos.inventory.system.config.Constants.DEFAULT_PASSWORD;
-import static com.vetrikos.inventory.system.config.Constants.DEFAULT_USERNAME;
+import static com.vetrikos.inventory.system.config.Constants.ADMIN_PASSWORD;
+import static com.vetrikos.inventory.system.config.Constants.ADMIN_USERNAME;
 
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
@@ -12,11 +12,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class KeycloakTestUtils {
 
-  private static final String REALM_NAME = "anon";
-  private static final String CLIENT_ID = "frontend";
+  private static final String REALM_NAME = "master";
+  private static final String CLIENT_ID = "admin-cli";
 
   public String getBearerToken() {
-    return getBearerToken(DEFAULT_USERNAME, DEFAULT_PASSWORD);
+    return getBearerToken(ADMIN_USERNAME, ADMIN_PASSWORD);
   }
 
   public String getBearerToken(String username, String password) {
