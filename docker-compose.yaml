@@ -28,6 +28,21 @@ services:
       - ./volumes/pgadmin:/var/lib/pgadmin
     restart: unless-stopped
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:20.0.3
+    environment:
+      KEYCLOAK_USER: user
+      KEYCLOAK_PASSWORD: password
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    command:
+      - start-dev
+      - --import-realm
+    volumes:
+      - ./volumes/keycloak/import:/opt/keycloak/data/import
+    ports:
+      - "8081:8080"
+
 networks:
   postgres:
     driver: bridge
