@@ -1,33 +1,36 @@
-import {DataGrid, GridRowModel, GridRowModes, GridRowModesModel, GridRowParams, GridRowsProp} from '@mui/x-data-grid';
-import routes from "../../routing/routes";
-import {useNavigate} from "react-router-dom";
+import {useLocation} from "react-router-dom";
+import {DataGrid, GridRowModel, GridRowModes, GridRowModesModel, GridRowsProp,} from "@mui/x-data-grid";
+import {ReactElement, useState} from "react";
+import EditToolbar from "./components/EditToolbarWarehouseItems.tsx";
 import {randomId} from "@mui/x-data-grid-generator";
-import {useState} from "react";
-import {WarehouseUpdateRequest} from "inventory-client-ts-axios";
-import {deleteWarehouse, updateWarehouse} from "../../client/warehouseClient.ts";
-import EditToolbar from "./components/EditToolBarWarehouses.tsx";
+import {deleteWarehouseItem, updateWarehouseItem} from "../../client/warehouseItemClient.ts";
+import {WarehouseItemRequest} from "inventory-client-ts-axios";
 import {handleRowEditStop, handleRowModesModelChange} from "../../functions/handlers.ts";
 import GetActions from "../../components/GetActions/GetActions.tsx";
 
-
 const initialRows: GridRowsProp = [
-    {id: randomId(), capacity: 1235, name: "Bratislava"},
-    {id: randomId(), capacity: 326, name: "Lozorno"},
-    {id: randomId(), capacity: 1588, name: "Prague"},
-    {id: randomId(), capacity: 1236, name: "Vienna"},
-    {id: randomId(), capacity: 5668, name: "Budapest"},
-    {id: randomId(), capacity: 84989, name: "Brno"},
+    {id: randomId(), name: 'Item1', size: 100, quantity: 100},
+    {id: randomId(), name: 'Item2', size: 150, quantity: 200},
+    {id: randomId(), name: 'Item3', size: 120, quantity: 180},
+    {id: randomId(), name: 'Item6', size: 90, quantity: 110},
+    {id: randomId(), name: 'Item9', size: 70, quantity: 80},
+    {id: randomId(), name: 'Item10', size: 180, quantity: 220},
+    {id: randomId(), name: 'Item14', size: 75, quantity: 95},
+    {id: randomId(), name: 'Item15', size: 165, quantity: 210},
+    {id: randomId(), name: 'Item20', size: 155, quantity: 200}
 ];
 
-const WarehousePage = () => {
-    const navigate = useNavigate();
+const WarehousePage = (): ReactElement => {
+    const location = useLocation();
+    const {id: warehouseId, name: warehouseName, capacity: warehouseCapacity} = location.state?.rowDetails;
+
 
     const [rows, setRows] = useState(initialRows);
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
 
 
     const handleDeleteClick = (id: number) => async () => {
-        await deleteWarehouse(id);
+        await deleteWarehouseItem(warehouseId, id);
         setRows(rows.filter((row) => row.id !== id));
     };
 
@@ -44,21 +47,17 @@ const WarehousePage = () => {
     };
 
     const processRowUpdate = async (newRow: GridRowModel) => {
-        const newWarehouse: WarehouseUpdateRequest = {
+        const newItem: WarehouseItemRequest = {
             name: newRow?.name,
-            capacity: +newRow?.quantity
+            size: +newRow?.size,
+            quantity: +newRow?.quantity
         }
-        await updateWarehouse(newRow?.id, newWarehouse);
+        await updateWarehouseItem(warehouseId, newRow?.id, newItem);
 
         const updatedRow = {...newRow, isNew: false};
         setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
         return updatedRow;
     };
-
-    function handleRowClick(row: GridRowParams<any>) {
-        const rowData = rows.find(r => r.id === row.id);
-        navigate(routes.warehouse, {state: {rowDetails: rowData}});
-    }
 
     const columns = [
         {
@@ -68,8 +67,15 @@ const WarehousePage = () => {
             editable: true,
         },
         {
-            field: 'capacity',
-            headerName: 'Capacity',
+            field: 'size',
+            headerName: 'Size',
+            type: 'number',
+            width: 200,
+            editable: true,
+        },
+        {
+            field: 'quantity',
+            headerName: 'Quantity',
             type: 'number',
             width: 200,
             editable: true,
@@ -92,13 +98,14 @@ const WarehousePage = () => {
 
     return (
         <div style={{height: 600, width: '100%', textAlign: 'center'}}>
-            <h1>Warehouses</h1>
+            <h1>{warehouseName} warehouse</h1>
+            <h2>Capacity: {warehouseCapacity}</h2>
+            <h3>Items for warehouse {warehouseName}</h3>
             <DataGrid
                 rows={rows}
                 columns={columns}
                 editMode="row"
                 rowModesModel={rowModesModel}
-                onRowClick={(row) => handleRowClick(row)}
                 onRowModesModelChange={(newModel) => handleRowModesModelChange(newModel, setRowModesModel)}
                 onRowEditStop={handleRowEditStop}
                 processRowUpdate={(newRow) => processRowUpdate(newRow)}
@@ -107,13 +114,15 @@ const WarehousePage = () => {
                     toolbar: EditToolbar,
                 }}
                 slotProps={{
-                    toolbar: {setRows, setRowModesModel},
+                    toolbar: {setRows, setRowModesModel, warehouseId},
                 }}
                 rowHeight={35}
                 autoPageSize
             />
         </div>
+    );
 
-    )
-}
+};
+
 export default WarehousePage;
+

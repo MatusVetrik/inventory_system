@@ -9,7 +9,6 @@ const App = () => (
                 <a href={routes.intro}>IntroPage</a>
             </li>
             <li>
-                <a href={routes.sign_in}>SignInPage</a>
             </li>
         </div>
     </>
