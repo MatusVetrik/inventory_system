@@ -17,7 +17,6 @@ interface Props {
 export default ({setRows, setRowModesModel}: Props): ReactElement => {
     const handleClick = async () => {
         const newWarehouse: WarehouseRequest = {
-            userId: randomId(),
             name: "",
             capacity: 0,
         }
@@ -28,7 +27,6 @@ export default ({setRows, setRowModesModel}: Props): ReactElement => {
             id,
             name: newWarehouse.name,
             capacity: newWarehouse.capacity,
-            userId: newWarehouse.userId,
             isNew: true
         }]);
         setRowModesModel((oldModel) => ({
