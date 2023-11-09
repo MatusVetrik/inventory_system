@@ -13,6 +13,7 @@ import com.vetrikos.inventory.system.model.WarehouseUpdateRequestRestDTO;
 import com.vetrikos.inventory.system.repository.UserRepository;
 import com.vetrikos.inventory.system.repository.WarehouseRepository;
 import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,6 +44,7 @@ class WarehouseServiceImplIT {
   @BeforeEach
   void setUp() {
     sampleUser = User.builder()
+        .id(UUID.randomUUID())
         .username("user")
         .fullName("Sample User")
         .build();

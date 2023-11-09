@@ -25,6 +25,7 @@ import com.vetrikos.inventory.system.repository.UserRepository;
 import com.vetrikos.inventory.system.repository.WarehouseRepository;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -72,6 +73,7 @@ class WarehouseControllerIT {
   @BeforeEach
   void setUp() {
     sampleUser = User.builder()
+        .id(UUID.randomUUID())
         .username("user")
         .fullName("Sample User")
         .build();
