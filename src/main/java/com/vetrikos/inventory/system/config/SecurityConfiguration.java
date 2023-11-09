@@ -1,5 +1,6 @@
 package com.vetrikos.inventory.system.config;
 
+import com.vetrikos.inventory.system.filter.UserSynchronizationFilter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -10,12 +11,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -28,6 +31,9 @@ public class SecurityConfiguration {
   public static final String JWT_PREFERRED_USERNAME_CLAIM_NAME = "preferred_username";
   public static final String JWT_FULL_NAME_CLAIM_NAME = "name";
   public static final String GRANTED_AUTHORITY_ROLE_PREFIX = "ROLE_";
+  public static final String USER_UUID_CLAIM_NAME = "sub";
+
+  private final UserSynchronizationFilter userSynchronizationFilter;
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -48,6 +54,10 @@ public class SecurityConfiguration {
 
     http.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(
         SessionCreationPolicy.STATELESS));
+
+    http.cors(AbstractHttpConfigurer::disable);
+
+    http.addFilterAfter(userSynchronizationFilter, BearerTokenAuthenticationFilter.class);
 
     http.oauth2ResourceServer(
         httpSecurityOAuth2ResourceServerConfigurer -> httpSecurityOAuth2ResourceServerConfigurer.jwt(

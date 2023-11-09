@@ -1,12 +1,10 @@
 package com.vetrikos.inventory.system.service;
 
 import com.vetrikos.inventory.system.entity.User;
-import com.vetrikos.inventory.system.model.UserRestDTO;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.lang.NonNull;
-
 import java.util.List;
 import java.util.UUID;
+import org.springframework.lang.NonNull;
 
 public interface UserService {
 
@@ -19,14 +17,16 @@ public interface UserService {
     @NonNull
     User findById(@NotNull UUID userId);
 
+    Boolean existsById(@NotNull UUID userId);
+
     @NonNull
     List<User> findAll();
 
     @NonNull
-    User createUser(@NotNull UserRestDTO requestRestDTO);
+    User createUser(@NotNull User userRequest);
 
     @NonNull
-    User updateUser(@NotNull UUID userId, @NotNull UserRestDTO updateRequestRestDTO);
+    User updateUser(@NotNull UUID userId, @NotNull User userRequest);
 
     void deleteUser(@NotNull UUID userId);
 
