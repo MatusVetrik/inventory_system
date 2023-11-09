@@ -1,33 +1,40 @@
 import {DataGrid, GridRowModel, GridRowModes, GridRowModesModel, GridRowParams, GridRowsProp} from '@mui/x-data-grid';
 import routes from "../../routing/routes";
 import {useNavigate} from "react-router-dom";
-import {randomId} from "@mui/x-data-grid-generator";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {WarehouseUpdateRequest} from "inventory-client-ts-axios";
-import {deleteWarehouse, updateWarehouse} from "../../client/warehouseClient.ts";
+import {deleteWarehouse, getListWarehouses, updateWarehouse} from "../../client/warehouseClient.ts";
 import EditToolbar from "./components/EditToolBarWarehouses.tsx";
 import {handleRowEditStop, handleRowModesModelChange} from "../../functions/handlers.ts";
 import GetActions from "../../components/GetActions/GetActions.tsx";
+import useClientFetch from "../../hooks/useClientFetch.ts";
 
 
-const initialRows: GridRowsProp = [
-    {id: randomId(), capacity: 1235, name: "Bratislava"},
-    {id: randomId(), capacity: 326, name: "Lozorno"},
-    {id: randomId(), capacity: 1588, name: "Prague"},
-    {id: randomId(), capacity: 1236, name: "Vienna"},
-    {id: randomId(), capacity: 5668, name: "Budapest"},
-    {id: randomId(), capacity: 84989, name: "Brno"},
-];
+// const initialRows: GridRowsProp = [
+//     {id: randomId(), capacity: 1235, name: "Bratislava"},
+//     {id: randomId(), capacity: 326, name: "Lozorno"},
+//     {id: randomId(), capacity: 1588, name: "Prague"},
+//     {id: randomId(), capacity: 1236, name: "Vienna"},
+//     {id: randomId(), capacity: 5668, name: "Budapest"},
+//     {id: randomId(), capacity: 84989, name: "Brno"},
+// ];
 
 const WarehousePage = () => {
     const navigate = useNavigate();
 
-    const [rows, setRows] = useState(initialRows);
+    const [rows, setRows] = useState<GridRowsProp>([]);
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
+
+    const {data: warehouseList, refetch} = useClientFetch(() => getListWarehouses(), []);
+
+    useEffect(() => {
+        if (warehouseList) setRows(warehouseList);
+    }, [warehouseList])
 
 
     const handleDeleteClick = (id: number) => async () => {
         await deleteWarehouse(id);
+        refetch();
         setRows(rows.filter((row) => row.id !== id));
     };
 
@@ -46,9 +53,10 @@ const WarehousePage = () => {
     const processRowUpdate = async (newRow: GridRowModel) => {
         const newWarehouse: WarehouseUpdateRequest = {
             name: newRow?.name,
-            capacity: +newRow?.quantity
+            capacity: +newRow?.capacity
         }
         await updateWarehouse(newRow?.id, newWarehouse);
+        refetch();
 
         const updatedRow = {...newRow, isNew: false};
         setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
@@ -107,7 +115,7 @@ const WarehousePage = () => {
                     toolbar: EditToolbar,
                 }}
                 slotProps={{
-                    toolbar: {setRows, setRowModesModel},
+                    toolbar: {setRows, setRowModesModel, refetch},
                 }}
                 rowHeight={35}
                 autoPageSize

@@ -12,9 +12,10 @@ interface Props {
         newModel: (oldModel: GridRowModesModel) => GridRowModesModel,
     ) => void;
     warehouseId: number,
+    refetch: () => void,
 }
 
-export default ({setRows, setRowModesModel, warehouseId}: Props): ReactElement => {
+export default ({setRows, setRowModesModel, warehouseId, refetch}: Props): ReactElement => {
     const handleClick = async () => {
         const newItem: WarehouseItemRequest = {
             name: "",
@@ -22,6 +23,7 @@ export default ({setRows, setRowModesModel, warehouseId}: Props): ReactElement =
             size: 0,
         }
         await createWarehouseItem(warehouseId, newItem);
+        refetch();
 
         const id = randomId();
         setRows((oldRows) => [...oldRows, {
