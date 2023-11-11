@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldNameConstants;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -90,5 +91,11 @@ public class SecurityConfiguration {
   public static String parseClaimAsStringOrElse(Jwt jwt, String claimName, String orElseValue) {
     String claimValue = jwt.getClaimAsString(claimName);
     return (claimValue == null || claimValue.trim().isEmpty()) ? orElseValue : claimValue;
+  }
+
+  @FieldNameConstants
+  public static class ConfigAnonUserRoles {
+
+    private String ROLE_USER, ROLE_MANAGER, ROLE_ADMIN;
   }
 }
