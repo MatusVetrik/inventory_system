@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class KeycloakTestUtils {
 
-  private static final String REALM_NAME = "master";
-  private static final String CLIENT_ID = "admin-cli";
+  private static final String REALM_NAME = "inventory_system";
+  private static final String CLIENT_ID = "frontend";
 
   public String getBearerToken() {
     return getBearerToken(ADMIN_USERNAME, ADMIN_PASSWORD);

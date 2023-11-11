@@ -7,7 +7,7 @@ public class InventoryKeycloakContainer extends ExtendableKeycloakContainer<Inve
 
   private static final String DOCKER_IMAGE_NAME = "quay.io/keycloak/keycloak:20.0.3";
   private static final String KEYCLOAK_REALM_EXPORT_PATH = "keycloak/realm_export.json";
-  private static final String KEYCLOAK_REALM_NAME = "master";
+  private static final String KEYCLOAK_REALM_NAME = "inventory_system";
 
   private static InventoryKeycloakContainer container;
 
