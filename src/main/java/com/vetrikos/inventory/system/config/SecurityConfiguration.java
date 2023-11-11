@@ -8,10 +8,12 @@ import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -48,14 +50,16 @@ public class SecurityConfiguration {
                 "/csrf",
                 "/v3/api-docs",
                 "/v3/api-docs/swagger-config",
-                "/swagger-resources/**").permitAll()
+                "/swagger-resources/**")
+            .permitAll()
+            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
             .anyRequest().authenticated()
     );
 
     http.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(
         SessionCreationPolicy.STATELESS));
 
-    http.cors(AbstractHttpConfigurer::disable);
+    http.csrf(AbstractHttpConfigurer::disable);
 
     http.addFilterAfter(userSynchronizationFilter, BearerTokenAuthenticationFilter.class);
 
@@ -76,7 +80,10 @@ public class SecurityConfiguration {
                       parseClaimAsStringOrElse(jwt, JWT_PREFERRED_USERNAME_CLAIM_NAME,
                           jwt.getSubject()));
                 })));
-    
+
+    http.headers(httpSecurityHeadersConfigurer -> httpSecurityHeadersConfigurer.frameOptions(
+        FrameOptionsConfig::sameOrigin));
+
     return http.build();
   }
 

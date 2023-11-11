@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -31,29 +30,38 @@ public class UserSynchronizationFilter extends OncePerRequestFilter {
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
       FilterChain filterChain) throws ServletException, IOException {
-    log.info("UserRegistrationFilter called for {} request with path {}", request.getMethod(),
-        request.getServletPath());
 
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    Jwt principal = (Jwt) authentication.getPrincipal();
+    try {
+      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+      if (authentication != null) {
+        log.info("UserRegistrationFilter called for {} request with path {}", request.getMethod(),
+            request.getServletPath());
 
-    UUID userId = UUID.fromString(principal.getSubject());
+        Jwt principal = (Jwt) authentication.getPrincipal();
 
-    User user = User.builder()
-        .id(userId)
-        .username(authentication.getName())
-        .fullName(
-            parseClaimAsStringOrElse(principal, JWT_FULL_NAME_CLAIM_NAME, authentication.getName()))
-        .roles(authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(
-            Collectors.toList()))
-        .build();
+        UUID userId = UUID.fromString(principal.getSubject());
 
-    if (userService.existsById(userId)) {
-      log.info("Updating user data for user with id {}", userId);
-      userService.updateUser(userId, user);
-    } else {
-      log.info("Creating user {}", user);
-      userService.createUser(user);
+        User user = User.builder()
+            .id(userId)
+            .username(authentication.getName())
+            .fullName(
+                parseClaimAsStringOrElse(principal, JWT_FULL_NAME_CLAIM_NAME,
+                    authentication.getName()))
+            .roles(
+                authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+                    .toList())
+            .build();
+
+        if (Boolean.TRUE.equals(userService.existsById(userId))) {
+          log.info("Updating user data for user with id {}", userId);
+          userService.updateUser(userId, user);
+        } else {
+          log.info("Creating user {}", user);
+          userService.createUser(user);
+        }
+      }
+    } catch (Exception e) {
+      log.error("User sync filter exception {}", e.getMessage());
     }
 
     filterChain.doFilter(request, response);
