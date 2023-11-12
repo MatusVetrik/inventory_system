@@ -28,7 +28,7 @@ interface Props {
 const defaultTheme = createTheme();
 
 export default ({children}: Props) => {
-    const [open, setOpen] = React.useState(true);
+    const [open, setOpen] = React.useState(false);
     const toggleDrawer = () => {
         setOpen(!open);
     };
@@ -39,7 +39,7 @@ export default ({children}: Props) => {
         <ThemeProvider theme={defaultTheme}>
             <Box sx={{display: 'flex'}}>
                 <CssBaseline/>
-                <AppBar position="absolute" open={open}>
+                <AppBar position="fixed" open={open}>
                     <Toolbar sx={{pr: '24px',}}>
                         <IconButton
                             edge="start"
@@ -85,19 +85,11 @@ export default ({children}: Props) => {
                         <Divider sx={{my: 1}}/>
                     </List>
                 </Drawer>
-                <Box
-                    component="main"
-                    sx={{
-                        flexGrow: 1,
-                        height: '100vh',
-                        overflow: 'auto',
-                    }}
-                >
-                    <Toolbar/>
+                <Box component="main" sx={{flexGrow: 1, p: 3}}>
                     <Container maxWidth="lg" sx={{mt: 4, mb: 4}}>
-                        <Grid   alignItems="center"
-                                justifyContent="center"
-                                container spacing={3}>
+                        <Grid alignItems="center"
+                              justifyContent="center"
+                              container spacing={3}>
                             <Grid item xs={12} md={8} lg={9}>
                                 {children}
                             </Grid>

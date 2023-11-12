@@ -1,36 +1,42 @@
 import {useLocation} from "react-router-dom";
 import {DataGrid, GridRowModel, GridRowModes, GridRowModesModel, GridRowsProp,} from "@mui/x-data-grid";
-import {ReactElement, useState} from "react";
+import {ReactElement, useEffect, useState} from "react";
 import EditToolbar from "./components/EditToolbarWarehouseItems.tsx";
-import {randomId} from "@mui/x-data-grid-generator";
-import {deleteWarehouseItem, updateWarehouseItem} from "../../client/warehouseItemClient.ts";
+import {deleteWarehouseItem, getListWarehouseItems, updateWarehouseItem} from "../../client/warehouseItemClient.ts";
 import {WarehouseItemRequest} from "inventory-client-ts-axios";
 import {handleRowEditStop, handleRowModesModelChange} from "../../functions/handlers.ts";
 import GetActions from "../../components/GetActions/GetActions.tsx";
+import useClientFetch from "../../hooks/useClientFetch.ts";
 
-const initialRows: GridRowsProp = [
-    {id: randomId(), name: 'Item1', size: 100, quantity: 100},
-    {id: randomId(), name: 'Item2', size: 150, quantity: 200},
-    {id: randomId(), name: 'Item3', size: 120, quantity: 180},
-    {id: randomId(), name: 'Item6', size: 90, quantity: 110},
-    {id: randomId(), name: 'Item9', size: 70, quantity: 80},
-    {id: randomId(), name: 'Item10', size: 180, quantity: 220},
-    {id: randomId(), name: 'Item14', size: 75, quantity: 95},
-    {id: randomId(), name: 'Item15', size: 165, quantity: 210},
-    {id: randomId(), name: 'Item20', size: 155, quantity: 200}
-];
+// const initialRows: GridRowsProp = [
+//     {id: randomId(), name: 'Item1', size: 100, quantity: 100},
+//     {id: randomId(), name: 'Item2', size: 150, quantity: 200},
+//     {id: randomId(), name: 'Item3', size: 120, quantity: 180},
+//     {id: randomId(), name: 'Item6', size: 90, quantity: 110},
+//     {id: randomId(), name: 'Item9', size: 70, quantity: 80},
+//     {id: randomId(), name: 'Item10', size: 180, quantity: 220},
+//     {id: randomId(), name: 'Item14', size: 75, quantity: 95},
+//     {id: randomId(), name: 'Item15', size: 165, quantity: 210},
+//     {id: randomId(), name: 'Item20', size: 155, quantity: 200}
+// ];
 
 const WarehousePage = (): ReactElement => {
     const location = useLocation();
     const {id: warehouseId, name: warehouseName, capacity: warehouseCapacity} = location.state?.rowDetails;
 
-
-    const [rows, setRows] = useState(initialRows);
+    const [rows, setRows] = useState<GridRowsProp>([]);
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
 
+    const {data: warehouseItemsList, refetch} = useClientFetch(() => getListWarehouseItems(warehouseId), []);
+
+    useEffect(() => {
+        if (warehouseItemsList) setRows(warehouseItemsList);
+    }, [warehouseItemsList])
 
     const handleDeleteClick = (id: number) => async () => {
         await deleteWarehouseItem(warehouseId, id);
+        refetch();
+
         setRows(rows.filter((row) => row.id !== id));
     };
 
@@ -53,6 +59,7 @@ const WarehousePage = (): ReactElement => {
             quantity: +newRow?.quantity
         }
         await updateWarehouseItem(warehouseId, newRow?.id, newItem);
+        refetch();
 
         const updatedRow = {...newRow, isNew: false};
         setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
@@ -114,7 +121,7 @@ const WarehousePage = (): ReactElement => {
                     toolbar: EditToolbar,
                 }}
                 slotProps={{
-                    toolbar: {setRows, setRowModesModel, warehouseId},
+                    toolbar: {warehouseId, refetch},
                 }}
                 rowHeight={35}
                 autoPageSize
