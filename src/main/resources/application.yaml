@@ -1,4 +1,6 @@
 spring:
+  #  profiles:
+  #    active: nodocker
   jpa:
     hibernate:
       ddl-auto: update
