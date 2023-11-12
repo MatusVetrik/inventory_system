@@ -2,3 +2,13 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${OAUTH2_ISSUER_URI}
+  docker:
+    compose:
+      lifecycle-management: start_only
+
+OAUTH2_ISSUER_URI: http://localhost:8081/realms/inventory_system

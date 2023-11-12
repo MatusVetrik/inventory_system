@@ -5,3 +5,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
+logging:
+  level:
+    org.testcontainers: INFO
+    com.github.dockerjava: WARN

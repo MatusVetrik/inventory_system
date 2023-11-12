@@ -9,8 +9,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.vetrikos.inventory.system.config.SecurityConfiguration.ConfigAnonUserRoles.Fields;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vetrikos.inventory.system.config.CustomPostgreSQLContainer;
+import com.vetrikos.inventory.system.config.IntegrationTest;
+import com.vetrikos.inventory.system.config.InventoryKeycloakContainer;
+import com.vetrikos.inventory.system.config.KeycloakTestUtils;
 import com.vetrikos.inventory.system.entity.User;
 import com.vetrikos.inventory.system.entity.Warehouse;
 import com.vetrikos.inventory.system.mapper.WarehouseMapper;
@@ -22,28 +26,31 @@ import com.vetrikos.inventory.system.repository.UserRepository;
 import com.vetrikos.inventory.system.repository.WarehouseRepository;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Stream;
-import org.junit.ClassRule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.junit.jupiter.Container;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
-@AutoConfigureMockMvc
+@IntegrationTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class WarehouseControllerIT {
 
-  @ClassRule
+  @Container
   public static CustomPostgreSQLContainer postgreSQLContainer = CustomPostgreSQLContainer.getInstance();
+
+  @Container
+  public static InventoryKeycloakContainer keycloakContainer = InventoryKeycloakContainer.getInstance();
+
+  @Autowired
+  private KeycloakTestUtils keycloakTestUtils;
 
   @Autowired
   private UserRepository userRepository;
@@ -67,8 +74,10 @@ class WarehouseControllerIT {
   @BeforeEach
   void setUp() {
     sampleUser = User.builder()
+        .id(UUID.randomUUID())
         .username("user")
         .fullName("Sample User")
+        .roles(List.of(Fields.ROLE_ADMIN))
         .build();
 
     sampleWarehouse = Warehouse.builder()
@@ -89,13 +98,15 @@ class WarehouseControllerIT {
     String warehouseName = "Test warehouse";
     int warehouseCapacity = 500;
 
-    User user = userRepository.save(sampleUser);
+//    User user = userRepository.save(sampleUser);
 
-    WarehouseRequestRestDTO requestDTO = new WarehouseRequestRestDTO(warehouseCapacity, warehouseName);
+    WarehouseRequestRestDTO requestDTO = new WarehouseRequestRestDTO(warehouseCapacity,
+        warehouseName);
 
     MvcResult mvcResult = mockMvc.perform(post(WAREHOUSE_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(requestDTO)))
+            .content(objectMapper.writeValueAsString(requestDTO))
+            .header(HttpHeaders.AUTHORIZATION, keycloakTestUtils.getBearerToken()))
         .andExpect(status().isCreated())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andReturn();
@@ -126,7 +137,8 @@ class WarehouseControllerIT {
     User user = userRepository.save(sampleUser);
     Warehouse warehouse = user.getWarehouse();
 
-    mockMvc.perform(delete(WAREHOUSE_API_URL + "/" + warehouse.getId()))
+    mockMvc.perform(delete(WAREHOUSE_API_URL + "/" + warehouse.getId())
+            .header(HttpHeaders.AUTHORIZATION, keycloakTestUtils.getBearerToken()))
         .andExpect(status().isNoContent());
 
     Optional<Warehouse> optionalWarehouse = warehouseRepository.findById(warehouse.getId());
@@ -143,7 +155,8 @@ class WarehouseControllerIT {
     User user = userRepository.save(sampleUser);
     Warehouse warehouse = user.getWarehouse();
 
-    mockMvc.perform(get(WAREHOUSE_API_URL + "/" + warehouse.getId()))
+    mockMvc.perform(get(WAREHOUSE_API_URL + "/" + warehouse.getId())
+            .header(HttpHeaders.AUTHORIZATION, keycloakTestUtils.getBearerToken()))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(content().json(objectMapper.writeValueAsString(
@@ -157,7 +170,8 @@ class WarehouseControllerIT {
     List<BasicWarehouseRestDTO> warehouses = Stream.of(user.getWarehouse())
         .map(warehouseMapper::warehouseToBasicWarehouseRestDTO).toList();
 
-    mockMvc.perform(get(WAREHOUSE_API_URL))
+    mockMvc.perform(get(WAREHOUSE_API_URL)
+            .header(HttpHeaders.AUTHORIZATION, keycloakTestUtils.getBearerToken()))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(content().json(objectMapper.writeValueAsString(warehouses)));
@@ -182,7 +196,8 @@ class WarehouseControllerIT {
 
     mockMvc.perform(put(WAREHOUSE_API_URL + "/" + expectedWarehouse.getId())
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(requestDTO)))
+            .content(objectMapper.writeValueAsString(requestDTO))
+            .header(HttpHeaders.AUTHORIZATION, keycloakTestUtils.getBearerToken()))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(content().json(objectMapper.writeValueAsString(

@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.vetrikos.inventory.system.config.CustomPostgreSQLContainer;
+import com.vetrikos.inventory.system.config.IntegrationTest;
+import com.vetrikos.inventory.system.config.InventoryKeycloakContainer;
 import com.vetrikos.inventory.system.entity.User;
 import com.vetrikos.inventory.system.entity.Warehouse;
 import com.vetrikos.inventory.system.model.WarehouseRequestRestDTO;
@@ -11,21 +13,22 @@ import com.vetrikos.inventory.system.model.WarehouseUpdateRequestRestDTO;
 import com.vetrikos.inventory.system.repository.UserRepository;
 import com.vetrikos.inventory.system.repository.WarehouseRepository;
 import java.util.List;
-import org.junit.ClassRule;
+import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.test.context.ActiveProfiles;
+import org.testcontainers.junit.jupiter.Container;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
+@IntegrationTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class WarehouseServiceImplIT {
 
-  @ClassRule
+  @Container
   public static CustomPostgreSQLContainer postgreSQLContainer = CustomPostgreSQLContainer.getInstance();
+
+  @Container
+  public static InventoryKeycloakContainer keycloakContainer = InventoryKeycloakContainer.getInstance();
 
   @Autowired
   private UserRepository userRepository;
@@ -41,6 +44,7 @@ class WarehouseServiceImplIT {
   @BeforeEach
   void setUp() {
     sampleUser = User.builder()
+        .id(UUID.randomUUID())
         .username("user")
         .fullName("Sample User")
         .build();

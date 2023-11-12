@@ -1,7 +1,13 @@
 import {ClientResponse} from "../model/ClientResponse.ts";
-import {WarehouseItem, WarehouseItemRequest, WarehouseItemsApi} from "inventory-client-ts-axios";
+import {
+    Configuration,
+    WarehouseItem,
+    WarehouseItemRequest,
+    WarehouseItemsApi
+} from "inventory-client-ts-axios";
+import {axiosInstance} from "./axiosInstance.ts";
 
-const client = new WarehouseItemsApi();
+const client = new WarehouseItemsApi(new Configuration(), '', axiosInstance);
 
 export const getListWarehouseItems = async (warehouseId: number): Promise<ClientResponse<WarehouseItem[]>> => {
     const {data, status} = await client.listWarehouseItems(warehouseId);

@@ -363,6 +363,7 @@ components:
         - id
         - username
         - fullName
+        - roles
       properties:
         id:
           type: string
@@ -371,6 +372,12 @@ components:
           type: string
         fullName:
           type: string
+        roles:
+          type: array
+          items: {
+            type: string
+          }
+
 
     WarehouseItem:
       type: object
