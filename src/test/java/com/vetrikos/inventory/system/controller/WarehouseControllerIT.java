@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.vetrikos.inventory.system.config.SecurityConfiguration.ConfigAnonUserRoles.Fields;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vetrikos.inventory.system.config.CustomPostgreSQLContainer;
 import com.vetrikos.inventory.system.config.IntegrationTest;
@@ -76,6 +77,7 @@ class WarehouseControllerIT {
         .id(UUID.randomUUID())
         .username("user")
         .fullName("Sample User")
+        .roles(List.of(Fields.ROLE_ADMIN))
         .build();
 
     sampleWarehouse = Warehouse.builder()
