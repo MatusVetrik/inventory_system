@@ -121,7 +121,7 @@ const WarehousePage = (): ReactElement => {
                     toolbar: EditToolbar,
                 }}
                 slotProps={{
-                    toolbar: {setRows, setRowModesModel, warehouseId, refetch},
+                    toolbar: {warehouseId, refetch},
                 }}
                 rowHeight={35}
                 autoPageSize

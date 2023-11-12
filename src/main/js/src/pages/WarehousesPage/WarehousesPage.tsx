@@ -115,7 +115,7 @@ const WarehousePage = () => {
                     toolbar: EditToolbar,
                 }}
                 slotProps={{
-                    toolbar: {setRows, setRowModesModel, refetch},
+                    toolbar: {refetch},
                 }}
                 rowHeight={35}
                 autoPageSize
