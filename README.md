@@ -63,8 +63,8 @@ the following code in the
 [application.yml](./src/main/resources/application.yaml) **application.yml** file.
 
 ```yaml
-     profiles:
-       active: nodocker
+profiles:
+  active: nodocker
 ```
 Run docker compose in the root folder
    ```bash 
