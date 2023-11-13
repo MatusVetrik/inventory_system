@@ -5,46 +5,35 @@
 ### Prerequisites
 
 1. Node and npm installed
-2. JDK installed
+2. JDK 21 installed
 3. Maven installed
-3. Docker running
-4. Ports **8080**, **8081**, **5173**, **5050**, **5432**  available
+4. Docker running
+5. Ports **8080**, **8081**, **5173**, **5050**, **5432**  available
 
 ### Setup project
 
 1. Install backend dependencies and auto-generated objects
    ```mvn clean install -DskipTests```
+2. Install node modules ```npm install```
+3. generate openapi clients ```generate-client```
+4. Install node modules within generated client ```npm install```
 
-2. Install npm modules
-    * move to js directory with [package.json](./src/main/js/package.json) file
-   ```bash 
-   cd ./src/main/js
-   ```
-    * install node modules
-   ```bash
-   npm install
-   ```
-    * generate openapi clients
-   ```bash
-   npm run generate-client
-   ```
-    * install node modules in generated client
-   ```bash
-   npm install
-   ```
 
 ### Start project
+Start both frontend and backend
+```app```
 
+Start backend and frontend separately:
 1. Start backend with docker containers
-   ```mvn spring-boot:run```
+   ```Inventory backend```
     * Backend is running at http://localhost:8080
     * Keycloak is running at http://localhost:8081
     * PostgreSQL is running at http://localhost:5432
     * PgAdmin is running at http://localhost:5050
+   
+
 2. Start frontend
-   ```bash 
-   npm run dev
-   ```
+   ```frontend dev```
     * Frontend is running at http://localhost:5173
     * The application has three default users, each with a different role:
    
@@ -67,7 +56,5 @@ profiles:
   active: nodocker
 ```
 Run docker compose in the root folder
-   ```bash 
-   docker compose up -d
-   ```
+   ```docker-compose```.
 Then continue with [Start project](#start-project).
