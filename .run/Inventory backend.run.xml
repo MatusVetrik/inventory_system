@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Inventory backend" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="inventory.system" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.vetrikos.inventory.system.Application" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
