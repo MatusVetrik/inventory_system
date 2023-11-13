@@ -6,6 +6,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import {TextField} from "@mui/material";
 import {WarehouseRequest} from "inventory-client-ts-axios";
 import {createWarehouse} from "../../../client/warehouseClient.ts";
+import PrivateComponent from "../../../components/PrivateComponent";
+import {UserRoles} from "../../../model/UserRoles.ts";
 
 interface Props {
     refetch: () => void
@@ -38,26 +40,27 @@ export default ({refetch}: Props): ReactElement => {
                 alignItems: 'center',
             }}>
                 <GridToolbar style={{paddingTop: "10px"}}/>
+                <PrivateComponent allowedRoles={[UserRoles.ROLE_ADMIN]} >
                 {
-                    visible ?
-                        <Button
-                            variant="contained"
-                            color="error"
-                            startIcon={<CloseIcon/>}
-                            style={{height: "30px"}}
-                            onClick={handleClick}>
-                            Cancel
-                        </Button>
-                        : <Button
-                            variant="contained"
-                            color="primary"
-                            startIcon={<AddIcon/>}
-                            style={{height: "30px"}}
-                            onClick={handleClick}>
-                            Add warehouse
-                        </Button>
-
+                  visible ?
+                      <Button
+                          variant="contained"
+                          color="error"
+                          startIcon={<CloseIcon/>}
+                          style={{height: "30px"}}
+                          onClick={handleClick}>
+                          Cancel
+                      </Button>
+                      : <Button
+                          variant="contained"
+                          color="primary"
+                          startIcon={<AddIcon/>}
+                          style={{height: "30px"}}
+                          onClick={handleClick}>
+                          Add warehouse
+                      </Button>
                 }
+                </PrivateComponent>
             </div>
             {visible && (
                 <div style={{
