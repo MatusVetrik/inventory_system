@@ -56,7 +56,7 @@ export default ({warehouseId, refetch}: Props): ReactElement => {
                             startIcon={<AddIcon/>}
                             style={{height: "30px"}}
                             onClick={handleClick}>
-                            Add warehouse
+                            Add item
                         </Button>
 
                 }
