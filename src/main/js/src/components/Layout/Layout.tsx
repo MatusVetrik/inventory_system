@@ -4,19 +4,17 @@ import {createTheme, ThemeProvider} from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import {Container, Grid} from "@mui/material";
+import LogoutIcon from '@mui/icons-material/Logout';
+import {Container, Grid, Tooltip} from "@mui/material";
 import {useNavigate} from "react-router-dom";
-import Drawer from "./components/Drawer";
 import AppBar from "./components/AppBar";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import Menu from "./components/Menu";
 import routes from "../../routing/routes";
+import {useKeycloak} from "@react-keycloak/web";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import WarehouseIcon from '@mui/icons-material/Warehouse';
 
 export const drawerWidth: number = 240;
 
@@ -35,56 +33,46 @@ export default ({children}: Props) => {
 
     const navigate = useNavigate();
 
+    const {keycloak} = useKeycloak();
+    const onClickLogout = () => keycloak.logout();
+
     return (
         <ThemeProvider theme={defaultTheme}>
             <Box sx={{display: 'flex'}}>
                 <CssBaseline/>
                 <AppBar position="fixed" open={open}>
                     <Toolbar sx={{pr: '24px',}}>
-                        <IconButton
-                            edge="start"
-                            color="inherit"
-                            aria-label="open drawer"
-                            onClick={toggleDrawer}
-                            sx={{
-                                ...(open && {display: 'none'}),
-                            }}
-                        >
-                            <MenuIcon/>
-                        </IconButton>
+                        <Tooltip title="Orders">
+                            <IconButton color="inherit" onClick={() => navigate(routes.orders)}>
+                                <ShoppingCartIcon fontSize="large"/>
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Warehouses">
+                            <IconButton color="inherit" onClick={() => navigate(routes.warehouses)}>
+                                <WarehouseIcon fontSize="large"/>
+                            </IconButton>
+                        </Tooltip>
                         <Typography
                             component="h1"
-                            variant="h5"
+                            variant="h4"
                             color="inherit"
                             noWrap
                             sx={{flexGrow: 1}}
                         >
                             Inventory system
                         </Typography>
-                        <IconButton color="inherit" onClick={() => navigate(routes.profile)}>
-                            <AccountCircleIcon fontSize="large"/>
-                        </IconButton>
+                        <Tooltip title="Profile">
+                            <IconButton color="inherit" onClick={() => navigate(routes.profile)}>
+                                <AccountCircleIcon fontSize="large"/>
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Log out">
+                            <IconButton color="inherit" onClick={onClickLogout}>
+                                <LogoutIcon fontSize="large"/>
+                            </IconButton>
+                        </Tooltip>
                     </Toolbar>
                 </AppBar>
-                <Drawer variant="permanent" open={open}>
-                    <Toolbar
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'flex-end',
-                            px: [1],
-                        }}
-                    >
-                        <IconButton onClick={toggleDrawer}>
-                            <ChevronLeftIcon/>
-                        </IconButton>
-                    </Toolbar>
-                    <Divider/>
-                    <List component="nav">
-                        <Menu/>
-                        <Divider sx={{my: 1}}/>
-                    </List>
-                </Drawer>
                 <Box component="main" sx={{flexGrow: 1, p: 3}}>
                     <Container maxWidth="lg" sx={{mt: 4, mb: 4}}>
                         <Grid alignItems="center"
