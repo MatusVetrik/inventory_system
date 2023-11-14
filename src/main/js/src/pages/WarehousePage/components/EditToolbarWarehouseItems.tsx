@@ -15,7 +15,7 @@ interface Props {
 export default ({warehouseId, refetch}: Props): ReactElement => {
 
     const [visible, setVisible] = useState<boolean>(false);
-    const [newItem, setNewItem] = useState<WarehouseItemRequest>({});
+    const [newItem, setNewItem] = useState<WarehouseItemRequest>({name: "", quantity: 0, size: 0});
 
     const handleClick = async () => setVisible(!visible);
 
@@ -23,7 +23,7 @@ export default ({warehouseId, refetch}: Props): ReactElement => {
         await createWarehouseItem(warehouseId, newItem);
         refetch();
         setVisible(false);
-        setNewItem({});
+        setNewItem({name: "", quantity: 0, size: 0});
     }
 
     const setWarehouseAttribute = (attr: 'name' | 'size' | 'quantity', value: string | number) => setNewItem(prev => ({

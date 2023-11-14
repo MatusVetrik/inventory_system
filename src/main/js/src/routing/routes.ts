@@ -1,9 +1,13 @@
 export default {
     index: '/app/',
-    intro: '/app/intro/',
     profile: '/app/profile',
-    warehouses: '/app/warehouses',
-    warehouse: '/app/warehouse',
+    warehouses: '/app/warehouse-list',
+    warehouse: {
+        list: '/app/warehouse-list',
+        detail: {
+            raw: '/app/warehouse/:warehouseId',
+            withId: (id: number): string => `/app/warehouse/${id}`
+        }
+    },
     orders: '/app/orders',
-    items: '/app/items',
 };
