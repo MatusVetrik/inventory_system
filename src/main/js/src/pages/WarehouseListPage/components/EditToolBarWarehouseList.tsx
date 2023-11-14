@@ -13,7 +13,7 @@ interface Props {
 
 export default ({refetch}: Props): ReactElement => {
     const [visible, setVisible] = useState<boolean>(false);
-    const [newWarehouse, setNewWarehouse] = useState<WarehouseRequest>({});
+    const [newWarehouse, setNewWarehouse] = useState<WarehouseRequest>({capacity: 0, name: ""});
 
     const handleClick = async () => setVisible(!visible);
 
@@ -21,7 +21,7 @@ export default ({refetch}: Props): ReactElement => {
         await createWarehouse(newWarehouse);
         refetch();
         setVisible(false);
-        setNewWarehouse({});
+        setNewWarehouse({capacity: 0, name: ""});
     }
 
     const setWarehouseAttribute = (attr: 'name' | 'capacity', value: string | number) => setNewWarehouse(prev => ({
