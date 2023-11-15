@@ -7,7 +7,7 @@
 1. Node and npm installed
 2. JDK 21 installed
 3. Maven installed
-4. Docker running
+4. Docker installed and running
 5. Ports **8080**, **8081**, **5173**, **5050**, **5432**  available
 6. Open the project in IntelliJ to be able to correctly use predefined run scripts
 
@@ -16,13 +16,15 @@
 1. Install backend dependencies and auto-generated objects
    ```mvn clean install -DskipTests```
 2. Install node modules ```npm install```
-3. generate openapi clients ```generate-client```
+3. generate openapi client ```generate-client```
 4. Install node modules within generated client ```npm install```
 
 
 ### Start project
 Start both frontend and backend
-```app```
+```app```  
+Open the frontend running at http://localhost:5173
+
 
 Start backend and frontend separately:
 1. Start backend with docker containers
