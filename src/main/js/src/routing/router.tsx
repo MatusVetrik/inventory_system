@@ -2,23 +2,18 @@ import {ReactElement} from 'react';
 import {Route, Routes} from 'react-router-dom';
 import routes from './routes';
 import App from "../App";
-import IntroPage from "../pages/IntroPage/IntroPage";
 import OrdersPage from "../pages/OrdersPage/OrdersPage";
 import ProfilePage from "../pages/ProfilePage/ProfilePage";
-import WarehousesPage from "../pages/WarehousesPage/WarehousesPage";
+import WarehousesPage from "../pages/WarehouseListPage/WarehouseListPage.tsx";
 import WarehousePage from "../pages/WarehousePage/WarehousePage";
-import ItemsPage from "../pages/ItemsPage/ItemsPage";
 
 const Router = (): ReactElement => (
     <Routes>
         <Route path={routes.index} element={<App/>}/>
-        <Route path={routes.intro} element={<IntroPage/>}/>
         <Route path={routes.orders} element={<OrdersPage/>}/>
         <Route path={routes.profile} element={<ProfilePage/>}/>
-        <Route path={routes.warehouses} element={<WarehousesPage/>}/>
-        <Route path={routes.warehouse} element={<WarehousePage/>}/>
-        <Route path={routes.items} element={<ItemsPage/>}/>
-
+        <Route path={routes.warehouse.list} element={<WarehousesPage/>}/>
+        <Route path={routes.warehouse.detail.raw} element={<WarehousePage/>}/>
     </Routes>
 );
 

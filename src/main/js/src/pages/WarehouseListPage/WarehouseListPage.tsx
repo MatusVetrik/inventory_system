@@ -4,7 +4,7 @@ import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {WarehouseUpdateRequest} from "inventory-client-ts-axios";
 import {deleteWarehouse, getListWarehouses, updateWarehouse} from "../../client/warehouseClient.ts";
-import EditToolbar from "./components/EditToolBarWarehouses.tsx";
+import EditToolbar from "./components/EditToolBarWarehouseList.tsx";
 import {handleRowEditStop, handleRowModesModelChange} from "../../functions/handlers.ts";
 import GetActions from "../../components/GetActions/GetActions.tsx";
 import useClientFetch from "../../hooks/useClientFetch.ts";
@@ -65,7 +65,7 @@ const WarehousePage = () => {
 
     function handleRowClick(row: GridRowParams<any>) {
         const rowData = rows.find(r => r.id === row.id);
-        navigate(routes.warehouse, {state: {rowDetails: rowData}});
+        navigate(routes.warehouse.detail.withId(+row.id), {state: {rowDetails: rowData}});
     }
 
     const columns = [
