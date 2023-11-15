@@ -1,23 +1,21 @@
 package com.vetrikos.inventory.system.controller;
 
 import com.vetrikos.inventory.system.api.WarehousesApi;
+import com.vetrikos.inventory.system.config.SecurityConfiguration.ConfigAnonUserRoles.Fields;
 import com.vetrikos.inventory.system.mapper.WarehouseMapper;
 import com.vetrikos.inventory.system.model.BasicWarehouseRestDTO;
 import com.vetrikos.inventory.system.model.FullWarehouseRestDTO;
 import com.vetrikos.inventory.system.model.WarehouseRequestRestDTO;
 import com.vetrikos.inventory.system.model.WarehouseUpdateRequestRestDTO;
 import com.vetrikos.inventory.system.service.WarehouseService;
-import com.vetrikos.inventory.system.config.SecurityConfiguration.ConfigAnonUserRoles.Fields;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api")
 @RequiredArgsConstructor
 public class WarehouseController implements WarehousesApi {
 
