@@ -12,7 +12,5 @@ spring:
   docker:
     compose:
       lifecycle-management: start_only
-server:
-  servlet:
-    context-path: "/api"
+
 OAUTH2_ISSUER_URI: http://localhost:8081/realms/inventory_system
