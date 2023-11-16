@@ -17,10 +17,16 @@ public interface UserService {
     @NonNull
     User findById(@NotNull UUID userId);
 
+    @NonNull
+    User findByWarehouseAndUserId(@NotNull Long warehouseId, @NotNull UUID userId);
+
     Boolean existsById(@NotNull UUID userId);
 
     @NonNull
     List<User> findAll();
+
+    @NonNull
+    List<User> findAllByWarehouseId(@NotNull Long warehouseId);
 
     @NonNull
     User createUser(@NotNull User userRequest);

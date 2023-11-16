@@ -5,6 +5,7 @@ import com.vetrikos.inventory.system.model.WarehouseRequestRestDTO;
 import com.vetrikos.inventory.system.model.WarehouseUpdateRequestRestDTO;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.lang.NonNull;
 
 public interface WarehouseService {
@@ -29,5 +30,9 @@ public interface WarehouseService {
       @NotNull WarehouseUpdateRequestRestDTO updateRequestRestDTO);
 
   void deleteWarehouse(@NotNull Long warehouseId);
+
+  void deleteUserFromWarehouse(@NotNull Long warehouseId, @NotNull UUID userId);
+
+  void addUserToWarehouse(@NotNull Long warehouseId, @NotNull UUID userId);
 
 }

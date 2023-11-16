@@ -554,7 +554,7 @@ components:
       name: userId
       in: path
       required: true
-      description: ID of the item
+      description: ID of the user
       schema:
         type: string
         format: uuid

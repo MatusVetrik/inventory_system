@@ -25,6 +25,21 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  @NonNull
+  public User findByWarehouseAndUserId(Long warehouseId, UUID userId) {
+    return userRepository.findByIdAndWarehouseId(userId, warehouseId).orElseThrow(
+        () -> new IllegalArgumentException(
+            String.format("User with id %s not found in warehouse with id %d", userId.toString(),
+                warehouseId)));
+  }
+
+  @Override
+  @NonNull
+  public List<User> findAllByWarehouseId(Long warehouseId) {
+    return userRepository.findAllByWarehouseId(warehouseId);
+  }
+
+  @Override
   public Boolean existsById(UUID userId) {
     return userRepository.existsById(userId);
   }
