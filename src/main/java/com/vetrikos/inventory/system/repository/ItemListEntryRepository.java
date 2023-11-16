@@ -14,7 +14,7 @@ public interface ItemListEntryRepository extends JpaRepository<ItemListEntry, Lo
 
   List<ItemListEntry> findItemListEntriesByWarehouse(Warehouse warehouse);
 
-  @Query(value = "SELECT SUM(e.quantity * i.size) FROM ItemListEntry e JOIN e.item i WHERE e.warehouse.id = :warehouseId")
+  @Query(value = "SELECT COALESCE(SUM(e.quantity * i.size), 0) FROM ItemListEntry e JOIN e.item i WHERE e.warehouse.id = :warehouseId")
   Long getActualItemsCapacitySize(@Param("warehouseId") Long warehouseId);
 
 }
