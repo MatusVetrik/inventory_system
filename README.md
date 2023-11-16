@@ -9,7 +9,7 @@
 3. Maven installed
 4. Docker installed and running
 5. Ports **8080**, **8081**, **5173**, **5050**, **5432**  available
-6. Open the project in IntelliJ to be able to correctly use predefined run scripts
+6. Open the project in IntelliJ Ultimate version to be able to correctly use predefined run scripts
 
 ### Setup project
 
