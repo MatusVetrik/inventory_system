@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import lombok.NonNull;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 @Service
