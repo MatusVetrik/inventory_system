@@ -6,7 +6,6 @@ servers:
   - url: http://localhost:8080/api
     description: development
 paths:
-
   /warehouses:
     get:
       summary: List all warehouses
@@ -141,13 +140,13 @@ paths:
     get:
       parameters:
         - $ref: "#/components/parameters/WarehouseId"
-      summary: List all items in a given warehouse
+      summary: List all items in the given warehouse
       operationId: listWarehouseItems
       tags:
         - warehouseItems
       responses:
         '200':
-          description: all items in a given warehouse
+          description: all items in the given warehouse
           content:
             application/json:
               schema:
@@ -168,7 +167,7 @@ paths:
       tags:
         - warehouseItems
       requestBody:
-        description: Item to create in a given warehouse
+        description: Item to create in the given warehouse
         required: true
         content:
           application/json:
@@ -200,13 +199,13 @@ paths:
       parameters:
         - $ref: "#/components/parameters/WarehouseId"
         - $ref: "#/components/parameters/ItemId"
-      summary: Get specific item in a given warehouse
+      summary: Get specific item in the given warehouse
       operationId: getWarehouseItemById
       tags:
         - warehouseItems
       responses:
         '200':
-          description: specific item from a given warehouse
+          description: specific item from the given warehouse
           content:
             application/json:
               schema:
@@ -221,7 +220,7 @@ paths:
       parameters:
         - $ref: "#/components/parameters/WarehouseId"
         - $ref: "#/components/parameters/ItemId"
-      summary: Update item in a given warehouse
+      summary: Update item in the given warehouse
       operationId: updateWarehouseItem
       tags:
         - warehouseItems
@@ -234,7 +233,7 @@ paths:
               $ref: '#/components/schemas/WarehouseItemRequest'
       responses:
         '200':
-          description: updated item from a given warehouse
+          description: updated item from the given warehouse
           content:
             application/json:
               schema:
@@ -255,7 +254,7 @@ paths:
       parameters:
         - $ref: "#/components/parameters/WarehouseId"
         - $ref: "#/components/parameters/ItemId"
-      summary: Delete item in a given warehouse
+      summary: Delete item in the given warehouse
       operationId: deleteWarehouseItem
       tags:
         - warehouseItems
@@ -275,6 +274,98 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
+  /warehouses/{warehouseId}/users:
+    get:
+      parameters:
+        - $ref: "#/components/parameters/WarehouseId"
+      summary: List all users in the given warehouse
+      operationId: getWarehouseUsers
+      tags:
+        - warehouseUsers
+      responses:
+        '200':
+          description: all users in the given warehouse
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /warehouses/{warehouseId}/users/{userId}:
+    get:
+      parameters:
+        - $ref: "#/components/parameters/WarehouseId"
+        - $ref: "#/components/parameters/UserId"
+      summary: Get user in the given warehouse
+      operationId: getWarehouseUserById
+      tags:
+        - warehouseUsers
+      responses:
+        '200':
+          description: user from the given warehouse
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      parameters:
+        - $ref: "#/components/parameters/WarehouseId"
+        - $ref: "#/components/parameters/UserId"
+      summary: Add user to the given warehouse
+      operationId: addWarehouseUser
+      tags:
+        - warehouseUsers
+      responses:
+        '204':
+          description: Confirm that the user was added to the warehouse
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      parameters:
+        - $ref: "#/components/parameters/WarehouseId"
+        - $ref: "#/components/parameters/UserId"
+      summary: Remove user from the given warehouse
+      operationId: removeWarehouseUser
+      tags:
+        - warehouseUsers
+      responses:
+        '204':
+          description: Delete confirmation
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 
 #
 #  /user/profile:
@@ -459,6 +550,14 @@ components:
       schema:
         type: integer
         format: int64
+    UserId:
+      name: userId
+      in: path
+      required: true
+      description: ID of the user
+      schema:
+        type: string
+        format: uuid
 
 security:
   - oauth2: [ ]
