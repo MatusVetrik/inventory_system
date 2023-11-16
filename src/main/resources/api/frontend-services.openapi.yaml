@@ -400,6 +400,7 @@ components:
         - id
         - capacity
         - name
+        - itemsCapacitySize
       properties:
         id:
           type: integer
@@ -409,6 +410,9 @@ components:
           format: int32
         name:
           type: string
+        itemsCapacitySize:
+          type: integer
+          format: int64
 
     WarehouseRequest:
       type: object

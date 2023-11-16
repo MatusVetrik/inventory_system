@@ -1,5 +1,6 @@
 package com.vetrikos.inventory.system.service;
 
+import com.vetrikos.inventory.system.entity.BasicWarehouse;
 import com.vetrikos.inventory.system.entity.Warehouse;
 import com.vetrikos.inventory.system.model.WarehouseRequestRestDTO;
 import com.vetrikos.inventory.system.model.WarehouseUpdateRequestRestDTO;
@@ -20,7 +21,8 @@ public interface WarehouseService {
   Warehouse findById(@NotNull Long warehouseId);
 
   @NonNull
-  List<Warehouse> findAll();
+  @lombok.NonNull
+  List<BasicWarehouse> findAll();
 
   @NonNull
   Warehouse createWarehouse(@NotNull WarehouseRequestRestDTO requestRestDTO);

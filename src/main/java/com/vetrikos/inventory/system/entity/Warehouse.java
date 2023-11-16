@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -39,6 +40,10 @@ public class Warehouse {
 
   @Column(nullable = false)
   private String name;
+
+  @Transient
+  @Builder.Default
+  private Long itemsCapacitySize = 0L;
 
   @OneToMany(mappedBy = "warehouse", fetch = FetchType.EAGER)
   @Builder.Default

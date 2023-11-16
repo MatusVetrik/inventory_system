@@ -4,8 +4,8 @@ import com.vetrikos.inventory.system.entity.User;
 import com.vetrikos.inventory.system.repository.UserRepository;
 import java.util.List;
 import java.util.UUID;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

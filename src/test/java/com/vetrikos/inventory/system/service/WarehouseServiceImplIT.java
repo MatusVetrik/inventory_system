@@ -6,8 +6,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.vetrikos.inventory.system.config.CustomPostgreSQLContainer;
 import com.vetrikos.inventory.system.config.IntegrationTest;
 import com.vetrikos.inventory.system.config.InventoryKeycloakContainer;
+import com.vetrikos.inventory.system.entity.BasicWarehouse;
 import com.vetrikos.inventory.system.entity.User;
 import com.vetrikos.inventory.system.entity.Warehouse;
+import com.vetrikos.inventory.system.mapper.WarehouseMapper;
 import com.vetrikos.inventory.system.model.WarehouseRequestRestDTO;
 import com.vetrikos.inventory.system.model.WarehouseUpdateRequestRestDTO;
 import com.vetrikos.inventory.system.repository.UserRepository;
@@ -39,6 +41,9 @@ class WarehouseServiceImplIT {
   @Autowired
   private WarehouseServiceImpl warehouseService;
 
+  @Autowired
+  private WarehouseMapper warehouseMapper;
+
   private User sampleUser;
 
   @BeforeEach
@@ -67,14 +72,15 @@ class WarehouseServiceImplIT {
     sampleUser.setWarehouse(warehouse);
     sampleUser = userRepository.save(sampleUser);
 
-    List<Warehouse> result = warehouseService.findAll();
+    List<BasicWarehouse> result = warehouseService.findAll();
 
     System.out.println(result);
     System.out.println(warehouse.toString());
 
     assertThat(result).isNotEmpty()
-        .hasSize(1)
-        .containsExactlyInAnyOrder(warehouse);
+        .hasSize(1);
+    assertThat(warehouseMapper.basicWarehouseToBasicWarehouseRestDTO(result.get(0))).isEqualTo(
+        warehouseMapper.warehouseToBasicWarehouseRestDTO(warehouse));
   }
 
   @Test
