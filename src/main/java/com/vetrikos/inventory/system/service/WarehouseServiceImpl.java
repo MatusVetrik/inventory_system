@@ -1,5 +1,6 @@
 package com.vetrikos.inventory.system.service;
 
+import com.vetrikos.inventory.system.entity.BasicWarehouse;
 import com.vetrikos.inventory.system.entity.User;
 import com.vetrikos.inventory.system.entity.Warehouse;
 import com.vetrikos.inventory.system.model.WarehouseRequestRestDTO;
@@ -9,8 +10,8 @@ import com.vetrikos.inventory.system.repository.UserRepository;
 import com.vetrikos.inventory.system.repository.WarehouseRepository;
 import java.util.List;
 import java.util.UUID;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,15 +26,19 @@ public class WarehouseServiceImpl implements WarehouseService {
   @Override
   @NonNull
   public Warehouse findById(Long warehouseId) {
-    return warehouseRepository.findById(warehouseId)
+    return warehouseRepository.findById(warehouseId).map(warehouse -> {
+          warehouse.setItemsCapacitySize(
+              itemListEntryRepository.getActualItemsCapacitySize(warehouseId));
+          return warehouse;
+        })
         .orElseThrow(() -> new IllegalArgumentException(
             WarehouseService.warehouseNotFoundMessage(warehouseId)));
   }
 
   @Override
   @NonNull
-  public List<Warehouse> findAll() {
-    return warehouseRepository.findAll();
+  public List<BasicWarehouse> findAll() {
+    return warehouseRepository.findAllBasicWarehouses();
   }
 
   @Override

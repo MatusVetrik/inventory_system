@@ -51,7 +51,7 @@ public class WarehouseController implements WarehousesApi {
   @PreAuthorize("isAuthenticated()")
   public ResponseEntity<List<BasicWarehouseRestDTO>> listWarehouses() {
     return ResponseEntity.ok(warehouseService.findAll().stream()
-        .map(warehouseMapper::warehouseToBasicWarehouseRestDTO)
+        .map(warehouseMapper::basicWarehouseToBasicWarehouseRestDTO)
         .toList());
   }
 

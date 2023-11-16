@@ -45,13 +45,16 @@ class WarehouseMapperTest {
     long id = 1L;
     String name = "Lidl warehouse";
     int capacity = 500;
+    long itemsCapacitySize = 350;
     Warehouse warehouse = Warehouse.builder()
         .id(id)
         .name(name)
         .capacity(capacity)
         .users(List.of(user))
+        .itemsCapacitySize(itemsCapacitySize)
         .build();
-    BasicWarehouseRestDTO expectedResponse = new BasicWarehouseRestDTO(id, capacity, name);
+    BasicWarehouseRestDTO expectedResponse = new BasicWarehouseRestDTO(id, capacity, name,
+        itemsCapacitySize);
 
     BasicWarehouseRestDTO result = warehouseMapper.warehouseToBasicWarehouseRestDTO(warehouse);
 
@@ -64,6 +67,7 @@ class WarehouseMapperTest {
     long warehouseId = 1L;
     String warehouseName = "Lidl warehouse";
     int warehouseCapacity = 500;
+    long itemsCapacitySize = 350;
 
     Item item = Item.builder()
         .id(1L)
@@ -80,13 +84,14 @@ class WarehouseMapperTest {
         .name(warehouseName)
         .capacity(warehouseCapacity)
         .users(List.of(user))
+        .itemsCapacitySize(itemsCapacitySize)
         .entries(List.of(itemListEntry))
         .build();
-    WarehouseItemRestDTO itemRestDTO = itemListEntryMapper.itemListEntryToWarehouseItemRestDTO(itemListEntry);
+    WarehouseItemRestDTO itemRestDTO = itemListEntryMapper.itemListEntryToWarehouseItemRestDTO(
+        itemListEntry);
     UserRestDTO userRestDTO = userMapper.userToUserRestDTO(user);
     FullWarehouseRestDTO expectedResponse = new FullWarehouseRestDTO(warehouseId, warehouseCapacity,
-        warehouseName, List.of(itemRestDTO), List.of(userRestDTO));
-
+        warehouseName, itemsCapacitySize, List.of(itemRestDTO), List.of(userRestDTO));
 
     FullWarehouseRestDTO result = warehouseMapper.warehouseToFullWarehouseRestDTO(warehouse);
 

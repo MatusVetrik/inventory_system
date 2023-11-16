@@ -121,6 +121,7 @@ class WarehouseControllerIT {
     assertThat(result.getId()).isNotNull();
     assertThat(result.getCapacity()).isEqualTo(warehouseCapacity);
     assertThat(result.getName()).isEqualTo(warehouseName);
+    assertThat(result.getItemsCapacitySize()).isZero();
 //    assertThat(result.getUsers()).hasSize(1);
 
     // assert saved entities
