@@ -6,6 +6,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import {TextField} from "@mui/material";
 import {WarehouseRequest} from "inventory-client-ts-axios";
 import {createWarehouse} from "../../../client/warehouseClient.ts";
+import PrivateComponent from "../../../components/PrivateComponent";
+import {UserRoles} from "../../../model/UserRoles";
 
 interface Props {
     refetch: () => void
@@ -38,6 +40,7 @@ export default ({refetch}: Props): ReactElement => {
                 alignItems: 'center',
             }}>
                 <GridToolbar style={{paddingTop: "10px"}}/>
+                <PrivateComponent allowedRoles={[UserRoles.ROLE_ADMIN]}>
                 {
                     visible ?
                         <Button
@@ -58,6 +61,7 @@ export default ({refetch}: Props): ReactElement => {
                         </Button>
 
                 }
+                </PrivateComponent>
             </div>
             {visible && (
                 <div style={{

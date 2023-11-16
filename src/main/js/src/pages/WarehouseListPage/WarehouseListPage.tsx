@@ -8,6 +8,7 @@ import EditToolbar from "./components/EditToolBarWarehouseList.tsx";
 import {handleRowEditStop, handleRowModesModelChange} from "../../functions/handlers.ts";
 import GetActions from "../../components/GetActions/GetActions.tsx";
 import useClientFetch from "../../hooks/useClientFetch.ts";
+import keycloak from "../../keycloak/keycloak";
 
 
 // const initialRows: GridRowsProp = [
@@ -24,14 +25,43 @@ const WarehousePage = () => {
 
     const [rows, setRows] = useState<GridRowsProp>([]);
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
-
+    const [columns, setColumns] = useState([])
     const {data: warehouseList, refetch} = useClientFetch(() => getListWarehouses(), []);
-
     useEffect(() => {
         if (warehouseList) setRows(warehouseList);
     }, [warehouseList])
 
-
+    useEffect(() =>{
+        setColumns([
+            {
+                field: 'name',
+                headerName: 'Name',
+                width: 200,
+                editable: true,
+            },
+            {
+                field: 'capacity',
+                headerName: 'Capacity',
+                type: 'number',
+                width: 200,
+                editable: true,
+            },
+            {
+                field: 'actions',
+                type: 'actions',
+                headerName: 'Actions',
+                width: 200,
+                cellClassName: 'actions',
+                getActions: ({id}: { id: number }) => GetActions({
+                    id,
+                    rowModesModel,
+                    setRowModesModel,
+                    handleDeleteClick,
+                    handleCancelClick
+                }),
+            }]
+        )
+    },[])
     const handleDeleteClick = (id: number) => async () => {
         await deleteWarehouse(id);
         refetch();
@@ -68,35 +98,29 @@ const WarehousePage = () => {
         navigate(routes.warehouse.detail.withId(+row.id), {state: {rowDetails: rowData}});
     }
 
-    const columns = [
-        {
-            field: 'name',
-            headerName: 'Name',
-            width: 200,
-            editable: true,
-        },
-        {
-            field: 'capacity',
-            headerName: 'Capacity',
-            type: 'number',
-            width: 200,
-            editable: true,
-        },
-        {
-            field: 'actions',
-            type: 'actions',
-            headerName: 'Actions',
-            width: 200,
-            cellClassName: 'actions',
-            getActions: ({id}: { id: number }) => GetActions({
-                id,
-                rowModesModel,
-                setRowModesModel,
-                handleDeleteClick,
-                handleCancelClick
-            }),
-        },
-    ];
+
+    let roles;
+    keycloak.loadUserInfo().then(() => {
+         roles = keycloak.userInfo.roles.includes("ADMIN")
+
+        if(!roles){
+            setColumns([
+                {
+                    field: 'name',
+                    headerName: 'Name',
+                    width: 200,
+                    editable: true,
+                },
+                {
+                    field: 'capacity',
+                    headerName: 'Capacity',
+                    type: 'number',
+                    width: 200,
+                    editable: true,
+                },
+            ])
+        }
+    })
 
     return (
         <div style={{height: 600, width: '100%', textAlign: 'center'}}>

@@ -6,6 +6,8 @@ import {createWarehouseItem} from "../../../client/warehouseItemClient.ts";
 import {WarehouseItemRequest} from "inventory-client-ts-axios";
 import CloseIcon from "@mui/icons-material/Close";
 import {TextField} from "@mui/material";
+import {UserRoles} from "../../../model/UserRoles";
+import PrivateComponent from "../../../components/PrivateComponent";
 
 interface Props {
     warehouseId: number,
@@ -40,6 +42,8 @@ export default ({warehouseId, refetch}: Props): ReactElement => {
                 alignItems: 'center',
             }}>
                 <GridToolbar style={{paddingTop: "10px"}}/>
+                <PrivateComponent allowedRoles={[UserRoles.ROLE_ADMIN,UserRoles.ROLE_MANAGER]} >
+
                 {
                     visible ?
                         <Button
@@ -56,10 +60,11 @@ export default ({warehouseId, refetch}: Props): ReactElement => {
                             startIcon={<AddIcon/>}
                             style={{height: "30px"}}
                             onClick={handleClick}>
-                            Add warehouse
+                            Add item
                         </Button>
 
                 }
+                </PrivateComponent>
             </div>
             {visible && (
                 <div style={{
