@@ -4,7 +4,7 @@ import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {WarehouseUpdateRequest} from "inventory-client-ts-axios";
 import {deleteWarehouse, getListWarehouses, updateWarehouse} from "../../client/warehouseClient.ts";
-import EditToolbar from "./components/EditToolBarWarehouseList.tsx";
+import ToolBarWarehouseList from "./components/ToolbarWarehouseList.tsx";
 import {handleRowEditStop, handleRowModesModelChange} from "../../functions/handlers.ts";
 import GetActions from "../../components/GetActions/GetActions.tsx";
 import useClientFetch from "../../hooks/useClientFetch.ts";
@@ -91,28 +91,29 @@ const WarehousePage = () => {
     }
 
 
-    let roles;
-    keycloak.loadUserInfo().then(() => {
-        roles = (keycloak?.userInfo as any)?.roles?.includes("ADMIN")
+    useEffect(() => {
+        keycloak.loadUserInfo().then(() => {
+            const roles = (keycloak?.userInfo as any)?.roles?.includes("ADMIN")
 
-        if (!roles) {
-            setColumns([
-                {
-                    field: 'name',
-                    headerName: 'Name',
-                    width: 200,
-                    editable: true,
-                },
-                {
-                    field: 'capacity',
-                    headerName: 'Capacity',
-                    type: 'number',
-                    width: 200,
-                    editable: true,
-                },
-            ])
-        }
-    })
+            if (!roles) {
+                setColumns([
+                    {
+                        field: 'name',
+                        headerName: 'Name',
+                        width: 200,
+                        editable: true,
+                    },
+                    {
+                        field: 'capacity',
+                        headerName: 'Capacity',
+                        type: 'number',
+                        width: 200,
+                        editable: true,
+                    },
+                ])
+            }
+        })
+    }, []);
 
     return (
         <div style={{height: 600, width: '100%', textAlign: 'center'}}>
@@ -128,7 +129,7 @@ const WarehousePage = () => {
                 processRowUpdate={(newRow) => processRowUpdate(newRow)}
                 onProcessRowUpdateError={(error) => console.log(error)}
                 slots={{
-                    toolbar: EditToolbar,
+                    toolbar: ToolBarWarehouseList,
                 }}
                 slotProps={{
                     toolbar: {refetch},

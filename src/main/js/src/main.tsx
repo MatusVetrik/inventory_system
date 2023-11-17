@@ -1,5 +1,4 @@
 import {createRoot} from 'react-dom/client'
-import './index.css'
 import Router from "./routing/router";
 import Layout from "./components/Layout";
 import {BrowserRouter} from "react-router-dom";
@@ -13,11 +12,11 @@ createRoot(document.getElementById('root')!).render(
     <ReactKeycloakProvider authClient={keycloak}
                            initOptions={{onLoad: 'login-required', pkceMethod: "S256"}}
                            autoRefreshToken={false}
-                           LoadingComponent={<Loading />}>
-      <BrowserRouter>
-        <Layout>
-          <Router/>
-        </Layout>
-      </BrowserRouter>
+                           LoadingComponent={<Loading/>}>
+        <BrowserRouter>
+            <Layout>
+                <Router/>
+            </Layout>
+        </BrowserRouter>
     </ReactKeycloakProvider>,
 )

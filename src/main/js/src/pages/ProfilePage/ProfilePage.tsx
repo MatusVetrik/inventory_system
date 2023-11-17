@@ -4,6 +4,7 @@ import {Avatar, CircularProgress, List, ListItem, ListItemIcon, ListItemText, Pa
 import Typography from "@mui/material/Typography";
 import Person4Icon from '@mui/icons-material/Person4';
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
+import Button from "@mui/material/Button";
 
 
 export default (): ReactElement => {
@@ -11,6 +12,10 @@ export default (): ReactElement => {
     const [userData, setUserData] = useState<any>();
 
     const {keycloak} = useKeycloak();
+
+    const onClickChangeAccount = async () => {
+        await keycloak.accountManagement();
+    }
 
     useEffect(() => {
         keycloak.loadUserInfo().then(() => {
@@ -57,6 +62,7 @@ export default (): ReactElement => {
                         </List>
                     </div>
                 </div>
+                <Button variant="contained" onClick={onClickChangeAccount}>Change account details</Button>
             </Paper> : <h1><CircularProgress/></h1>
     )
 }
