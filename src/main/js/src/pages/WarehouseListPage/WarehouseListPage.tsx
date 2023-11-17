@@ -1,4 +1,4 @@
-import {DataGrid, GridRowModel, GridRowModes, GridRowModesModel, GridRowParams, GridRowsProp} from '@mui/x-data-grid';
+import {DataGrid, GridRowModel, GridRowModes, GridRowModesModel, GridRowParams, GridRowsProp,} from '@mui/x-data-grid';
 import routes from "../../routing/routes";
 import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
@@ -10,28 +10,18 @@ import GetActions from "../../components/GetActions/GetActions.tsx";
 import useClientFetch from "../../hooks/useClientFetch.ts";
 import keycloak from "../../keycloak/keycloak";
 
-
-// const initialRows: GridRowsProp = [
-//     {id: randomId(), capacity: 1235, name: "Bratislava"},
-//     {id: randomId(), capacity: 326, name: "Lozorno"},
-//     {id: randomId(), capacity: 1588, name: "Prague"},
-//     {id: randomId(), capacity: 1236, name: "Vienna"},
-//     {id: randomId(), capacity: 5668, name: "Budapest"},
-//     {id: randomId(), capacity: 84989, name: "Brno"},
-// ];
-
 const WarehousePage = () => {
     const navigate = useNavigate();
 
     const [rows, setRows] = useState<GridRowsProp>([]);
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
-    const [columns, setColumns] = useState([])
+    const [columns, setColumns] = useState<any[]>([])
     const {data: warehouseList, refetch} = useClientFetch(() => getListWarehouses(), []);
     useEffect(() => {
         if (warehouseList) setRows(warehouseList);
     }, [warehouseList])
 
-    useEffect(() =>{
+    useEffect(() => {
         setColumns([
             {
                 field: 'name',
@@ -52,7 +42,9 @@ const WarehousePage = () => {
                 headerName: 'Actions',
                 width: 200,
                 cellClassName: 'actions',
-                getActions: ({id}: { id: number }) => GetActions({
+                getActions: ({id}: {
+                    id: number
+                }) => GetActions({
                     id,
                     rowModesModel,
                     setRowModesModel,
@@ -61,7 +53,7 @@ const WarehousePage = () => {
                 }),
             }]
         )
-    },[])
+    }, [])
     const handleDeleteClick = (id: number) => async () => {
         await deleteWarehouse(id);
         refetch();
@@ -101,9 +93,9 @@ const WarehousePage = () => {
 
     let roles;
     keycloak.loadUserInfo().then(() => {
-         roles = keycloak.userInfo.roles.includes("ADMIN")
+        roles = (keycloak?.userInfo as any)?.roles?.includes("ADMIN")
 
-        if(!roles){
+        if (!roles) {
             setColumns([
                 {
                     field: 'name',

@@ -14,7 +14,6 @@ export default (): ReactElement => {
 
     useEffect(() => {
         keycloak.loadUserInfo().then(() => {
-            console.log(keycloak.userInfo)
             setUserData(keycloak.userInfo)
         })
     }, []);
@@ -43,21 +42,19 @@ export default (): ReactElement => {
                         </div>
                     </div>
                     <div style={{flex: 1}}>
-                        <Typography variant="body1">
-                            <b>Roles</b>
-                            <List dense={false}>
-                                {userData?.roles?.map((el: string, i: number) => (
-                                    <ListItem key={i}>
-                                        <ListItemIcon>
-                                            <ArrowRightAltIcon/>
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            primary={el}
-                                        />
-                                    </ListItem>
-                                ))}
-                            </List>
-                        </Typography>
+                        <b>Roles</b>
+                        <List dense={false}>
+                            {userData?.roles?.map((el: string, i: number) => (
+                                <ListItem key={i}>
+                                    <ListItemIcon>
+                                        <ArrowRightAltIcon/>
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary={el}
+                                    />
+                                </ListItem>
+                            ))}
+                        </List>
                     </div>
                 </div>
             </Paper> : <h1><CircularProgress/></h1>
