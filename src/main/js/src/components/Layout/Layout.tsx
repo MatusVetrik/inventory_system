@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {ReactNode} from 'react';
 import {createTheme, ThemeProvider} from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -26,11 +25,6 @@ interface Props {
 const defaultTheme = createTheme();
 
 export default ({children}: Props) => {
-    const [open, setOpen] = React.useState(false);
-    const toggleDrawer = () => {
-        setOpen(!open);
-    };
-
     const navigate = useNavigate();
 
     const {keycloak} = useKeycloak();
@@ -40,7 +34,7 @@ export default ({children}: Props) => {
         <ThemeProvider theme={defaultTheme}>
             <Box sx={{display: 'flex'}}>
                 <CssBaseline/>
-                <AppBar position="fixed" open={open}>
+                <AppBar position="fixed" open={false}>
                     <Toolbar sx={{pr: '24px',}}>
                         <Tooltip title="Orders">
                             <IconButton color="inherit" onClick={() => navigate(routes.orders)}>

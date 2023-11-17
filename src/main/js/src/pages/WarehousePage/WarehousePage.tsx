@@ -1,7 +1,7 @@
 import {useParams} from "react-router-dom";
 import {DataGrid, GridRowModel, GridRowModes, GridRowModesModel, GridRowsProp,} from "@mui/x-data-grid";
 import {ReactElement, useEffect, useState} from "react";
-import EditToolbar from "./components/EditToolbarWarehouseItems.tsx";
+import ToolbarWarehouseItems from "./components/ToolbarWarehouseItems.tsx";
 import {deleteWarehouseItem, getListWarehouseItems, updateWarehouseItem} from "../../client/warehouseItemClient.ts";
 import {WarehouseItemRequest} from "inventory-client-ts-axios";
 import {handleRowEditStop, handleRowModesModelChange} from "../../functions/handlers.ts";
@@ -11,6 +11,7 @@ import {getWarehouseById} from "../../client/warehouseClient.ts";
 import {CircularProgress} from "@mui/material";
 import keycloak from "../../keycloak/keycloak";
 import {UserRoles} from "../../model/UserRoles";
+import Users from "./users/Users.tsx";
 
 const WarehousePage = (): ReactElement => {
     const {warehouseId} = useParams<{
@@ -104,35 +105,38 @@ const WarehousePage = (): ReactElement => {
         setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
         return updatedRow;
     };
-    let roles;
-    keycloak.loadUserInfo().then(() => {
-        roles = (keycloak?.userInfo as any)?.roles?.includes(UserRoles.ROLE_ADMIN) || (keycloak?.userInfo as any)?.roles?.includes(UserRoles.ROLE_MANAGER)
 
-        if (!roles) {
-            setColumns([
-                {
-                    field: 'name',
-                    headerName: 'Name',
-                    width: 200,
-                    editable: true,
-                },
-                {
-                    field: 'size',
-                    headerName: 'Size',
-                    type: 'number',
-                    width: 200,
-                    editable: true,
-                },
-                {
-                    field: 'quantity',
-                    headerName: 'Quantity',
-                    type: 'number',
-                    width: 200,
-                    editable: true,
-                },
-            ])
-        }
-    })
+
+    useEffect(() => {
+        keycloak.loadUserInfo().then(() => {
+            const roles = (keycloak?.userInfo as any)?.roles?.includes(UserRoles.ROLE_ADMIN) || (keycloak?.userInfo as any)?.roles?.includes(UserRoles.ROLE_MANAGER)
+
+            if (!roles) {
+                setColumns([
+                    {
+                        field: 'name',
+                        headerName: 'Name',
+                        width: 200,
+                        editable: true,
+                    },
+                    {
+                        field: 'size',
+                        headerName: 'Size',
+                        type: 'number',
+                        width: 200,
+                        editable: true,
+                    },
+                    {
+                        field: 'quantity',
+                        headerName: 'Quantity',
+                        type: 'number',
+                        width: 200,
+                        editable: true,
+                    },
+                ])
+            }
+        })
+    }, []);
 
 
     return (
@@ -142,7 +146,7 @@ const WarehousePage = (): ReactElement => {
                     <>
                         <h1>{warehouse?.name} warehouse</h1>
                         <h2>Capacity: {warehouse?.capacity}</h2>
-                        <h3>Items for warehouse {warehouse?.name}</h3>
+                        <h3>Items</h3>
                     </> :
                     <>
                         <h1><CircularProgress/></h1>
@@ -160,7 +164,7 @@ const WarehousePage = (): ReactElement => {
                 processRowUpdate={(newRow) => processRowUpdate(newRow)}
                 onProcessRowUpdateError={(error) => console.log(error)}
                 slots={{
-                    toolbar: EditToolbar,
+                    toolbar: ToolbarWarehouseItems,
                 }}
                 slotProps={{
                     toolbar: {warehouseId, refetch},
@@ -168,6 +172,7 @@ const WarehousePage = (): ReactElement => {
                 rowHeight={35}
                 autoPageSize
             />
+            <Users warehouseId={+warehouseId!}/>
         </div>
     );
 
