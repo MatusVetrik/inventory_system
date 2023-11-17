@@ -49,7 +49,7 @@
       "name" : "MANAGER",
       "composite" : false,
       "clientRole" : false,
-      "containerId" : "invetory_system",
+      "containerId" : "inventory_system",
       "attributes" : { }
     }, {
       "id" : "c9a0d87a-ae03-4f53-bde1-d4ca7325d6a8",
@@ -57,18 +57,18 @@
       "description" : "${role_offline-access}",
       "composite" : false,
       "clientRole" : false,
-      "containerId" : "invetory_system",
+      "containerId" : "inventory_system",
       "attributes" : { }
     }, {
       "id" : "da9530ec-ee31-4b38-975c-8bc08f6891ce",
       "name" : "ADMIN",
       "composite" : false,
       "clientRole" : false,
-      "containerId" : "invetory_system",
+      "containerId" : "inventory_system",
       "attributes" : { }
     }, {
       "id" : "1177063b-82e1-4446-981b-c3e6c4c2ed19",
-      "name" : "default-roles-invetory_system",
+      "name" : "default-roles-inventory_system",
       "description" : "${role_default-roles}",
       "composite" : true,
       "composites" : {
@@ -78,7 +78,7 @@
         }
       },
       "clientRole" : false,
-      "containerId" : "invetory_system",
+      "containerId" : "inventory_system",
       "attributes" : { }
     }, {
       "id" : "7aff5c3f-ac36-44f3-9041-4453fee59e01",
@@ -86,14 +86,14 @@
       "description" : "${role_uma_authorization}",
       "composite" : false,
       "clientRole" : false,
-      "containerId" : "invetory_system",
+      "containerId" : "inventory_system",
       "attributes" : { }
     }, {
       "id" : "c1319a7f-e0b2-4c4a-85b3-f6b4c1acf089",
       "name" : "USER",
       "composite" : false,
       "clientRole" : false,
-      "containerId" : "invetory_system",
+      "containerId" : "inventory_system",
       "attributes" : { }
     } ],
     "client" : {
@@ -359,11 +359,11 @@
   "groups" : [ ],
   "defaultRole" : {
     "id" : "1177063b-82e1-4446-981b-c3e6c4c2ed19",
-    "name" : "default-roles-invetory_system",
+    "name" : "default-roles-inventory_system",
     "description" : "${role_default-roles}",
     "composite" : true,
     "clientRole" : false,
-    "containerId" : "invetory_system"
+    "containerId" : "inventory_system"
   },
   "requiredCredentials" : [ "password" ],
   "otpPolicyType" : "totp",
@@ -412,7 +412,7 @@
     } ],
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
-    "realmRoles" : [ "ADMIN", "default-roles-invetory_system" ],
+    "realmRoles" : [ "ADMIN", "default-roles-inventory_system" ],
     "notBefore" : 0,
     "groups" : [ ]
   }, {
@@ -433,7 +433,7 @@
     } ],
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
-    "realmRoles" : [ "MANAGER", "default-roles-invetory_system" ],
+    "realmRoles" : [ "MANAGER", "default-roles-inventory_system" ],
     "notBefore" : 0,
     "groups" : [ ]
   }, {
@@ -454,7 +454,7 @@
     } ],
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
-    "realmRoles" : [ "default-roles-invetory_system", "USER" ],
+    "realmRoles" : [ "default-roles-inventory_system", "USER" ],
     "notBefore" : 0,
     "groups" : [ ]
   } ],
@@ -503,12 +503,12 @@
     "clientId" : "account-console",
     "name" : "${client_account-console}",
     "rootUrl" : "${authBaseUrl}",
-    "baseUrl" : "/realms/invetory_system/account/",
+    "baseUrl" : "/realms/inventory_system/account/",
     "surrogateAuthRequired" : false,
     "enabled" : true,
     "alwaysDisplayInConsole" : false,
     "clientAuthenticatorType" : "client-secret",
-    "redirectUris" : [ "/realms/invetory_system/account/*" ],
+    "redirectUris" : [ "/realms/inventory_system/account/*" ],
     "webOrigins" : [ ],
     "notBefore" : 0,
     "bearerOnly" : false,
