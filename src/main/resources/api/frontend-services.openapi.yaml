@@ -366,17 +366,54 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-
-#
-#  /user/profile:
-#    get:
-#
-#  /user/orders:
-#    get:
-#
-#
-#  /orders/:
-#      get:
+  /users:
+    get:
+      summary: List all users
+      operationId: listUsers
+      tags:
+        - users
+      responses:
+        '200':
+          description: Whole list of available users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /users/{userId}:
+    get:
+      parameters:
+        - $ref: "#/components/parameters/UserId"
+      summary: Get user by id
+      operationId: getUserById
+      tags:
+        - users
+      responses:
+        '200':
+          description: User by id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 
 
 components:
@@ -472,6 +509,8 @@ components:
           items: {
             type: string
           }
+        warehouseName:
+          type: string
 
 
     WarehouseItem:
