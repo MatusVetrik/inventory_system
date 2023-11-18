@@ -29,7 +29,7 @@ SET default_table_access_method = heap;
 
 CREATE TABLE public.item_list_entry (
     id bigint NOT NULL,
-    quantity integer NOT NULL,
+    quantity bigint NOT NULL,
     item_id bigint,
     order_id bigint,
     warehouse_id bigint
@@ -61,7 +61,7 @@ ALTER SEQUENCE public.item_list_entry_seq OWNER TO postgres;
 CREATE TABLE public.items (
     id bigint NOT NULL,
     name character varying(255) NOT NULL,
-    size integer NOT NULL
+    size bigint NOT NULL
 );
 
 
@@ -135,7 +135,7 @@ ALTER TABLE public.users OWNER TO postgres;
 
 CREATE TABLE public.warehouses (
     id bigint NOT NULL,
-    capacity integer NOT NULL,
+    capacity bigint NOT NULL,
     name character varying(255) NOT NULL
 );
 
