@@ -11,11 +11,11 @@ import lombok.ToString;
 @AllArgsConstructor
 public class BasicWarehouse {
 
-  private Long id;
+    private Long id;
 
-  private Integer capacity;
+    private Long capacity;
 
-  private String name;
+    private String name;
 
-  private Long itemsCapacitySize;
+    private Long itemsCapacitySize;
 }

@@ -444,7 +444,7 @@ components:
           format: int64
         capacity:
           type: integer
-          format: int32
+          format: int64
         name:
           type: string
         itemsCapacitySize:
@@ -459,7 +459,7 @@ components:
       properties:
         capacity:
           type: integer
-          format: int32
+          format: int64
         name:
           type: string
 
@@ -468,7 +468,7 @@ components:
       properties:
         capacity:
           type: integer
-          format: int32
+          format: int64
         name:
           type: string
 
@@ -528,8 +528,10 @@ components:
           type: string
         size:
           type: integer
+          format: int64
         quantity:
           type: integer
+          format: int64
 
     WarehouseItemRequest:
       type: object
@@ -542,8 +544,10 @@ components:
           type: string
         size:
           type: integer
+          format: int64
         quantity:
           type: integer
+          format: int64
 
     BadRequest:
       type: object
