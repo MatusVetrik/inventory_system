@@ -1,5 +1,11 @@
 package com.vetrikos.inventory.system.service;
 
+import static com.vetrikos.inventory.system.exception.ItemExceedsWarehouseCapacityException.itemExceedsCapacityMessage;
+import static com.vetrikos.inventory.system.exception.ItemNotFoundException.itemInWarehouseNotFoundMessage;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.assertThrows;
+
 import com.vetrikos.inventory.system.config.CustomPostgreSQLContainer;
 import com.vetrikos.inventory.system.config.IntegrationTest;
 import com.vetrikos.inventory.system.config.InventoryKeycloakContainer;
@@ -7,11 +13,15 @@ import com.vetrikos.inventory.system.entity.Item;
 import com.vetrikos.inventory.system.entity.ItemListEntry;
 import com.vetrikos.inventory.system.entity.User;
 import com.vetrikos.inventory.system.entity.Warehouse;
+import com.vetrikos.inventory.system.exception.ItemNotFoundException;
 import com.vetrikos.inventory.system.model.WarehouseItemRequestRestDTO;
 import com.vetrikos.inventory.system.repository.ItemListEntryRepository;
 import com.vetrikos.inventory.system.repository.ItemRepository;
 import com.vetrikos.inventory.system.repository.UserRepository;
 import com.vetrikos.inventory.system.repository.WarehouseRepository;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,14 +29,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.testcontainers.junit.jupiter.Container;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertThrows;
 
 @IntegrationTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class ItemServiceImplIT {
@@ -217,7 +219,7 @@ public class ItemServiceImplIT {
 
         itemService.deleteItem(createdItem.getId());
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        Exception exception = assertThrows(ItemNotFoundException.class, () -> {
             itemService.findById(createdItem.getId());
         });
 
@@ -266,12 +268,11 @@ public class ItemServiceImplIT {
 
         itemService.deleteWarehouseItem(savedItem.getId(), warehouse.getId());
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        Exception exception = assertThrows(ItemNotFoundException.class, () -> {
             itemService.findItemInWarehouse(warehouse.getId(), savedItem.getId());
         });
         Warehouse warehouseAfterDelete = warehouseService.findById(warehouse.getId());
-        String expectedMessage = ItemListEntryService.itemInWarehouseNotFoundMessage(savedItem.getId(),
-                warehouse.getId());
+        String expectedMessage = itemInWarehouseNotFoundMessage(savedItem.getId(), warehouse.getId());
         String actualMessage = exception.getMessage();
 
         Assertions.assertTrue(actualMessage.contains(expectedMessage));
@@ -355,7 +356,7 @@ public class ItemServiceImplIT {
         ItemListEntry savedItemListEntry3 = itemListEntryRepository.save(itemListEntry3);
         Warehouse savedWarehouseWithEntries = warehouseRepository.save(warehouse);
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        Exception exception = assertThrows(ItemNotFoundException.class, () -> {
             itemService.findItemInWarehouse(warehouse.getId(), 50L);
         });
 
@@ -387,8 +388,7 @@ public class ItemServiceImplIT {
 
         assertThatThrownBy(() -> itemService.updateItem(createdItem.getId(), warehouse.getId(),
                 warehouseItemRequestRestDTO))
-                .hasMessage(
-                        ItemService.itemExceedsCapacityMessage(currentCapacity + newItemCapacity - capacity));
+                .hasMessage(itemExceedsCapacityMessage(currentCapacity + newItemCapacity - capacity));
     }
 
     @Test
@@ -400,6 +400,6 @@ public class ItemServiceImplIT {
         warehouseItemRestDTO.setQuantity(58L);
         warehouseItemRestDTO.setSize(50L);
         assertThatThrownBy(() -> itemService.createItem(warehouse.getId(), warehouseItemRestDTO))
-                .hasMessage(ItemService.itemExceedsCapacityMessage(100L));
+                .hasMessage(itemExceedsCapacityMessage(100L));
     }
 }

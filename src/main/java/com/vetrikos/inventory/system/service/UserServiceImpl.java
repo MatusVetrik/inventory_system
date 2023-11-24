@@ -1,6 +1,7 @@
 package com.vetrikos.inventory.system.service;
 
 import com.vetrikos.inventory.system.entity.User;
+import com.vetrikos.inventory.system.exception.UserNotFoundException;
 import com.vetrikos.inventory.system.repository.UserRepository;
 import java.util.List;
 import java.util.UUID;
@@ -20,17 +21,14 @@ public class UserServiceImpl implements UserService {
   @NonNull
   public User findById(UUID userId) {
     return userRepository.findById(userId)
-        .orElseThrow(() -> new IllegalArgumentException(
-            UserService.userNotFoundMessage(userId)));
+        .orElseThrow(() -> new UserNotFoundException(userId));
   }
 
   @Override
   @NonNull
   public User findByWarehouseAndUserId(Long warehouseId, UUID userId) {
-    return userRepository.findByIdAndWarehouseId(userId, warehouseId).orElseThrow(
-        () -> new IllegalArgumentException(
-            String.format("User with id %s not found in warehouse with id %d", userId.toString(),
-                warehouseId)));
+    return userRepository.findByIdAndWarehouseId(userId, warehouseId)
+        .orElseThrow(() -> new UserNotFoundException(userId, warehouseId));
   }
 
   @Override
@@ -62,8 +60,7 @@ public class UserServiceImpl implements UserService {
   @Transactional
   public User updateUser(UUID userId, User userRequest) {
     User user = userRepository.findById(userId)
-        .orElseThrow(() -> new IllegalArgumentException(
-            UserService.userNotFoundMessage(userId)));
+        .orElseThrow(() -> new UserNotFoundException(userId));
 
     user.setFullName(userRequest.getFullName());
     user.setRoles(userRequest.getRoles());
@@ -75,8 +72,7 @@ public class UserServiceImpl implements UserService {
   @Transactional
   public void deleteUser(UUID userId) {
     User user = userRepository.findById(userId)
-        .orElseThrow(() -> new IllegalArgumentException(
-            UserService.userNotFoundMessage(userId)));
+        .orElseThrow(() -> new UserNotFoundException(userId));
     userRepository.delete(user);
   }
 }

@@ -3,6 +3,9 @@ package com.vetrikos.inventory.system.service;
 import com.vetrikos.inventory.system.entity.BasicWarehouse;
 import com.vetrikos.inventory.system.entity.User;
 import com.vetrikos.inventory.system.entity.Warehouse;
+import com.vetrikos.inventory.system.exception.ItemExceedsWarehouseCapacityException;
+import com.vetrikos.inventory.system.exception.UserNotFoundException;
+import com.vetrikos.inventory.system.exception.WarehouseNotFoundException;
 import com.vetrikos.inventory.system.model.WarehouseRequestRestDTO;
 import com.vetrikos.inventory.system.model.WarehouseUpdateRequestRestDTO;
 import com.vetrikos.inventory.system.repository.ItemListEntryRepository;
@@ -31,8 +34,7 @@ public class WarehouseServiceImpl implements WarehouseService {
               itemListEntryRepository.getActualItemsCapacitySize(warehouseId));
           return warehouse;
         })
-        .orElseThrow(() -> new IllegalArgumentException(
-            WarehouseService.warehouseNotFoundMessage(warehouseId)));
+        .orElseThrow(() -> new WarehouseNotFoundException(warehouseId));
   }
 
   @Override
@@ -60,18 +62,22 @@ public class WarehouseServiceImpl implements WarehouseService {
   public Warehouse updateWarehouse(Long warehouseId,
       WarehouseUpdateRequestRestDTO updateRequestRestDTO) {
     Warehouse warehouse = warehouseRepository.findById(warehouseId)
-        .orElseThrow(() -> new IllegalArgumentException(
-            WarehouseService.warehouseNotFoundMessage(warehouseId)));
+        .orElseThrow(() -> new WarehouseNotFoundException(warehouseId));
 
-    Long actualItemsCapacitySize = itemListEntryRepository.getActualItemsCapacitySize(warehouseId);
+    if (updateRequestRestDTO.getCapacity() != null) {
+      Long actualItemsCapacitySize = itemListEntryRepository.getActualItemsCapacitySize(warehouseId);
 
-    if (updateRequestRestDTO.getCapacity() < actualItemsCapacitySize) {
-      throw new IllegalArgumentException(
-          "New warehouse capacity can not be lower than current items capacity");
+      if (updateRequestRestDTO.getCapacity() < actualItemsCapacitySize) {
+        throw new ItemExceedsWarehouseCapacityException(
+            "New warehouse capacity can not be lower than current items capacity");
+      }
+
+      warehouse.setCapacity(updateRequestRestDTO.getCapacity());
     }
 
-    warehouse.setCapacity(updateRequestRestDTO.getCapacity());
-    warehouse.setName(updateRequestRestDTO.getName());
+    if (updateRequestRestDTO.getName() != null || !updateRequestRestDTO.getName().isBlank()) {
+      warehouse.setName(updateRequestRestDTO.getName());
+    }
 
     return warehouse;
   }
@@ -80,12 +86,10 @@ public class WarehouseServiceImpl implements WarehouseService {
   @Transactional
   public void addUserToWarehouse(Long warehouseId, UUID userId) {
     Warehouse warehouse = warehouseRepository.findById(warehouseId)
-        .orElseThrow(() -> new IllegalArgumentException(
-            WarehouseService.warehouseNotFoundMessage(warehouseId)));
+        .orElseThrow(() -> new WarehouseNotFoundException(warehouseId));
 
     User user = userRepository.findById(userId)
-        .orElseThrow(() -> new IllegalArgumentException(
-            UserService.userNotFoundMessage(userId)));
+        .orElseThrow(() -> new UserNotFoundException(userId));
 
     user.setWarehouse(warehouse);
     warehouse.getUsers().add(user);
@@ -95,13 +99,11 @@ public class WarehouseServiceImpl implements WarehouseService {
   @Transactional
   public void deleteUserFromWarehouse(Long warehouseId, UUID userId) {
     Warehouse warehouse = warehouseRepository.findById(warehouseId)
-        .orElseThrow(() -> new IllegalArgumentException(
-            WarehouseService.warehouseNotFoundMessage(warehouseId)));
+        .orElseThrow(() -> new WarehouseNotFoundException(warehouseId));
 
     User user = warehouse.getUsers().stream()
         .filter(u -> u.getId().equals(userId))
-        .findFirst().orElseThrow(() -> new IllegalArgumentException(
-            UserService.userNotFoundMessage(userId) + " in warehouse with id: " + warehouseId));
+        .findFirst().orElseThrow(() -> new UserNotFoundException(userId, warehouseId));
 
     user.setWarehouse(null);
     warehouse.getUsers().remove(user);
@@ -111,8 +113,7 @@ public class WarehouseServiceImpl implements WarehouseService {
   @Transactional
   public void deleteWarehouse(Long warehouseId) {
     Warehouse warehouse = warehouseRepository.findById(warehouseId)
-        .orElseThrow(() -> new IllegalArgumentException(
-            WarehouseService.warehouseNotFoundMessage(warehouseId)));
+        .orElseThrow(() -> new WarehouseNotFoundException(warehouseId));
     warehouse.getUsers().forEach(user -> user.setWarehouse(null));
     warehouseRepository.delete(warehouse);
   }
