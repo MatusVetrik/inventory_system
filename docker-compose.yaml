@@ -12,7 +12,7 @@ services:
       - postgres
     volumes:
       - ./volumes/postgres:/data/postgres
-      - ./volumes/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
     restart: unless-stopped
 
   pgadmin:
@@ -40,7 +40,7 @@ services:
       - start-dev
       - --import-realm
     volumes:
-      - ./volumes/keycloak/import:/opt/keycloak/data/import
+      - ./keycloak/export:/opt/keycloak/data/import
     ports:
       - "8081:8080"
     restart: unless-stopped
