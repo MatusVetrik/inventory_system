@@ -1,58 +1,119 @@
-import * as React from 'react';
-import {DataGrid, GridToolbar} from '@mui/x-data-grid';
-import {useNavigate} from "react-router-dom";
+import {DataGrid, GridActionsCellItem, GridRowModel, GridRowModesModel, GridRowsProp} from '@mui/x-data-grid';
+import {useEffect, useState} from "react";
+import useClientFetch from "../../hooks/useClientFetch.ts";
+import {deleteOrder, getListOrders} from "../../client/orderClient.ts";
+import DeleteIcon from "@mui/icons-material/DeleteOutlined";
+import keycloak from "../../keycloak/keycloak.ts";
+import {UserRoles} from "../../model/UserRoles.ts";
+import {handleRowModesModelChange} from "../../functions/handlers.ts";
+import ToolbarOrders from "./components/ToolbarOrders.tsx";
 
-type Order = {
-    id: number;
-    createdBy: string;
-    price: number;
-    from: string;
-    to: string;
-};
-
-const columns = [
-    {field: 'id', headerName: 'ID', width: 90},
-    {field: 'createdBy', headerName: 'Created By', width: 150},
-    {field: 'price', headerName: 'Price (€)', width: 110},
-    {field: 'from', headerName: 'From', width: 130},
-    {field: 'to', headerName: 'To', width: 130},
-];
+const initColumns = [
+    {
+        field: 'id',
+        headerName: 'ID',
+        width: 200,
+        editable: true,
+    },
+    {
+        field: 'createdBy',
+        headerName: 'Created by',
+        width: 200,
+        editable: true,
+    },
+    {
+        field: 'itemId',
+        headerName: 'Item ID',
+        width: 200,
+        editable: true,
+    },
+    {
+        field: 'quantity',
+        headerName: 'Quantity',
+        width: 200,
+        editable: true,
+    },
+    {
+        field: 'sourceId',
+        headerName: 'Source ID',
+        width: 200,
+        editable: true,
+    },
+    {
+        field: 'destinationId',
+        headerName: 'Destination ID',
+        width: 200,
+        editable: true,
+    },
+]
 
 const OrdersPage = () => {
-    const navigate = useNavigate();
+    const [rows, setRows] = useState<GridRowsProp>([]);
+    const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
+    const [columns, setColumns] = useState<GridRowModel[]>([])
 
-    const orders: Order[] = [
-        {id: 1, createdBy: 'User1', price: 100, from: 'Location A', to: 'Location B'},
-        {id: 2, createdBy: 'User2', price: 150, from: 'Location C', to: 'Location D'},
-        {id: 3, createdBy: 'User3', price: 255, from: 'Location A', to: 'Location B'},
-        {id: 4, createdBy: 'User5', price: 577, from: 'Location C', to: 'Location A'},
-        {id: 5, createdBy: 'User4', price: 7874, from: 'Location C', to: 'Location B'},
-        {id: 6, createdBy: 'User1', price: 8285, from: 'Location B', to: 'Location C'},
-        {id: 7, createdBy: 'User1', price: 100, from: 'Location A', to: 'Location B'},
-        {id: 8, createdBy: 'User2', price: 150, from: 'Location C', to: 'Location D'},
-        {id: 9, createdBy: 'User3', price: 255, from: 'Location A', to: 'Location B'},
-        {id: 10, createdBy: 'User5', price: 577, from: 'Location C', to: 'Location A'},
-        {id: 11, createdBy: 'User4', price: 7874, from: 'Location C', to: 'Location B'},
-        {id: 12, createdBy: 'User1', price: 8285, from: 'Location B', to: 'Location C'},
-        {id: 13, createdBy: 'User1', price: 100, from: 'Location A', to: 'Location B'},
-        {id: 14, createdBy: 'User2', price: 150, from: 'Location C', to: 'Location D'},
-        {id: 15, createdBy: 'User3', price: 255, from: 'Location A', to: 'Location B'},
-        {id: 16, createdBy: 'User5', price: 577, from: 'Location C', to: 'Location A'},
-        {id: 17, createdBy: 'User4', price: 7874, from: 'Location C', to: 'Location B'},
-        {id: 18, createdBy: 'User1', price: 8285, from: 'Location B', to: 'Location C'},
+    const {data: orderList, refetch} = useClientFetch(() => getListOrders(), []);
 
-    ];
+    useEffect(() => {
+        if (orderList) setRows(orderList);
+    }, [orderList])
 
+    useEffect(() => {
+        setColumns([
+            ...initColumns,
+            {
+                field: 'actions',
+                type: 'actions',
+                headerName: 'Actions',
+                width: 200,
+                cellClassName: 'actions',
+                getActions: ({id}: {
+                    id: string
+                }) =>
+                    ([<GridActionsCellItem
+                        icon={<DeleteIcon/>}
+                        label="Delete"
+                        onClick={handleDeleteClick(id)}
+                        color="inherit"
+                    />]),
+            }]
+        )
+    }, [])
+
+    const handleDeleteClick = (id: string) => async () => {
+        await deleteOrder();
+        refetch();
+
+        setRows(rows.filter((row) => row.id !== id));
+    };
+
+    useEffect(() => {
+        keycloak.loadUserInfo().then(() => {
+            // @ts-ignore
+            const roles = keycloak?.userInfo?.roles?.includes(UserRoles.ROLE_ADMIN) || keycloak?.userInfo?.roles?.includes(UserRoles.ROLE_MANAGER)
+
+            if (!roles) {
+                setColumns(initColumns)
+            }
+        })
+    }, []);
 
     return (
-        <div style={{height: 400, width: '100%'}}>
-            <h1>Orders</h1>
+        <div style={{height: 600, marginTop: '40px', paddingBottom: '100px'}}>
+            <h3>Orders</h3>
             <DataGrid
-                slots={{toolbar: GridToolbar}}
-                rows={orders}
-                columns={columns}
+                rows={rows}
+                columns={columns as any}
+                editMode="row"
+                rowModesModel={rowModesModel}
+                onRowModesModelChange={(newModel) => handleRowModesModelChange(newModel, setRowModesModel)}
+                slots={{
+                    toolbar: ToolbarOrders,
+                }}
+                slotProps={{
+                    toolbar: {refetch},
+                }}
                 rowHeight={35}
-                headerHeight={40}
                 autoPageSize
             />
         </div>
