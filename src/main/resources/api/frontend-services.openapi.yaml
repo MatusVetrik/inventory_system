@@ -489,6 +489,34 @@ components:
               items:
                 $ref: "#/components/schemas/User"
 
+    Order:
+      type: object
+      required:
+        - id
+        - createdBy
+        - item
+        - quantity
+        - sourceWarehouse
+        - destinationWarehouse
+      properties:
+        id:
+          type: string
+          format: UUID
+        createdBy:
+          type: string
+        itemId:
+          type: integer
+          format: int64
+        quantity:
+          type: integer
+          format: int64
+        sourceId:
+          type: integer
+          format: int64
+        destinationId:
+          type: integer
+          format: int64
+
     User:
       type: object
       required:
