@@ -46,6 +46,12 @@ public class OrderServiceImpl implements OrderService {
             throw new ItemExceedsWarehouseCapacityException(
                     (itemsCapacity + currentCapacityDestination) - destinationWarehouse.getCapacity());
         }
+        List<ItemListEntry> existingItemSource = itemListEntryRepository.findItemListEntriesByWarehouseAndItem(
+                sourceWarehouse, itemInSourceWarehouse);
+        ItemListEntry itemListEntrySource = existingItemSource.get(0);
+        if (itemListEntrySource.getQuantity() - quantity < 0) { //if in source warehouse is not enough throw exception
+            throw new ItemExceedsWarehouseCapacityException(itemListEntrySource.getQuantity() - quantity);
+        }
         //check if item already exists in the destination warehouse
         List<ItemListEntry> existingItemDestination = itemListEntryRepository.findItemListEntriesByWarehouseAndItem(
                 destinationWarehouse, itemInSourceWarehouse);
@@ -60,12 +66,6 @@ public class OrderServiceImpl implements OrderService {
             itemListEntryRepository.save(itemListEntry);
         }
         //decrease quantity of itemListEntry in source warehouse
-        List<ItemListEntry> existingItemSource = itemListEntryRepository.findItemListEntriesByWarehouseAndItem(
-                sourceWarehouse, itemInSourceWarehouse);
-        ItemListEntry itemListEntrySource = existingItemSource.get(0);
-        if (itemListEntrySource.getQuantity() - quantity < 0) { //if in source warehouse is not enough throw exception
-            throw new ItemExceedsWarehouseCapacityException(itemListEntrySource.getQuantity() - quantity);
-        }
         if (itemListEntrySource.getQuantity() - quantity == 0) { //if we send all items delete itemListEntry
             itemListEntryRepository.delete(itemListEntrySource);
         }
