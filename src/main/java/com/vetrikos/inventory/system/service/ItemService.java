@@ -8,16 +8,6 @@ import org.springframework.lang.NonNull;
 import java.util.List;
 
 public interface ItemService {
-    String ITEM_NOT_FOUND_STRING_FORMAT = "Item with id %s not found";
-    String ITEM_EXCEEDS_CAPACITY_STRING_FORMAT = "Item exceeds capacity by %s";
-
-    static String itemNotFoundMessage(Long itemId) {
-        return String.format(ITEM_NOT_FOUND_STRING_FORMAT, itemId);
-    }
-
-    static String itemExceedsCapacityMessage(Long itemCapacity) {
-        return String.format(ITEM_EXCEEDS_CAPACITY_STRING_FORMAT, itemCapacity);
-    }
 
     @NonNull
     Item findById(@NotNull Long itemId);

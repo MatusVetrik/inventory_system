@@ -11,12 +11,6 @@ import org.springframework.lang.NonNull;
 
 public interface WarehouseService {
 
-  String WAREHOUSE_NOT_FOUND_STRING_FORMAT = "Warehouse with id %d not found";
-
-  static String warehouseNotFoundMessage(Long warehouseId) {
-    return String.format(WAREHOUSE_NOT_FOUND_STRING_FORMAT, warehouseId);
-  }
-
   @NonNull
   Warehouse findById(@NotNull Long warehouseId);
 

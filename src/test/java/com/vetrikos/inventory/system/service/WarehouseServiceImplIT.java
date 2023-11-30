@@ -1,28 +1,29 @@
 package com.vetrikos.inventory.system.service;
 
+import static com.vetrikos.inventory.system.exception.WarehouseNotFoundException.warehouseNotFoundMessage;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import com.vetrikos.inventory.system.config.CustomPostgreSQLContainer;
 import com.vetrikos.inventory.system.config.IntegrationTest;
 import com.vetrikos.inventory.system.config.InventoryKeycloakContainer;
 import com.vetrikos.inventory.system.entity.BasicWarehouse;
 import com.vetrikos.inventory.system.entity.User;
 import com.vetrikos.inventory.system.entity.Warehouse;
+import com.vetrikos.inventory.system.exception.WarehouseNotFoundException;
 import com.vetrikos.inventory.system.mapper.WarehouseMapper;
 import com.vetrikos.inventory.system.model.WarehouseRequestRestDTO;
 import com.vetrikos.inventory.system.model.WarehouseUpdateRequestRestDTO;
 import com.vetrikos.inventory.system.repository.UserRepository;
 import com.vetrikos.inventory.system.repository.WarehouseRepository;
+import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.testcontainers.junit.jupiter.Container;
-
-import java.util.List;
-import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @IntegrationTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class WarehouseServiceImplIT {
@@ -105,7 +106,8 @@ class WarehouseServiceImplIT {
     void findByIdShouldThrowException() {
         Long warehouseId = 1L;
         assertThatThrownBy(() -> warehouseService.findById(warehouseId))
-                .hasMessage(WarehouseService.warehouseNotFoundMessage(warehouseId));
+            .hasMessage(warehouseNotFoundMessage(warehouseId))
+            .isExactlyInstanceOf(WarehouseNotFoundException.class);
     }
 
     @Test
@@ -160,7 +162,8 @@ class WarehouseServiceImplIT {
         Long warehouseId = 1L;
         WarehouseUpdateRequestRestDTO requestRestDTO = new WarehouseUpdateRequestRestDTO();
         assertThatThrownBy(() -> warehouseService.updateWarehouse(warehouseId, requestRestDTO))
-                .hasMessage(WarehouseService.warehouseNotFoundMessage(warehouseId));
+            .hasMessage(warehouseNotFoundMessage(warehouseId))
+            .isExactlyInstanceOf(WarehouseNotFoundException.class);
     }
 
     @Test
@@ -184,6 +187,7 @@ class WarehouseServiceImplIT {
     void deleteWarehouseShouldThrowException() {
         Long warehouseId = 1L;
         assertThatThrownBy(() -> warehouseService.deleteWarehouse(warehouseId))
-                .hasMessage(WarehouseService.warehouseNotFoundMessage(warehouseId));
+            .hasMessage(warehouseNotFoundMessage(warehouseId))
+            .isExactlyInstanceOf(WarehouseNotFoundException.class);
     }
 }
