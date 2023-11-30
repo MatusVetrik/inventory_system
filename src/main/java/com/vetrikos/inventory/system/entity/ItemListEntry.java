@@ -27,9 +27,9 @@ public class ItemListEntry {
     @JoinColumn(name = "item_id")
     private Item item;
 
-    @ManyToOne()
-    @JoinColumn(name = "order_id")
-    private Order order;
+//    @ManyToOne()
+//    @JoinColumn(name = "order_id")
+//    private Order order;
 
     @ManyToOne(cascade = {
             CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH
@@ -69,7 +69,7 @@ public class ItemListEntry {
                 "id=" + id +
                 ", quantity=" + quantity +
                 ", itemId=" + (item == null ? null : item.getId()) +
-                ", orderId=" + (order == null ? null : order.getId()) +
+//                ", orderId=" + (order == null ? null : order.getId()) +
                 ", warehouseId=" + (warehouse == null ? null : warehouse.getId()) +
                 '}';
     }

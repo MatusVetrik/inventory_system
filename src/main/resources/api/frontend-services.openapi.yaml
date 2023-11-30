@@ -6,6 +6,58 @@ servers:
   - url: http://localhost:8080/api
     description: development
 paths:
+  /orders:
+    get:
+      summary: List all orders
+      operationId: listOrders
+      tags:
+        - orders
+      responses:
+        '200':
+          description: Whole list of orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Order"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Create order
+      operationId: createOrder
+      tags:
+        - orders
+      requestBody:
+        description: Order to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '201':
+          description: Created order
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /warehouses:
     get:
       summary: List all warehouses
@@ -494,16 +546,17 @@ components:
       required:
         - id
         - createdBy
-        - item
+        - itemId
         - quantity
-        - sourceWarehouse
-        - destinationWarehouse
+        - sourceId
+        - destinationId
       properties:
         id:
           type: string
           format: UUID
         createdBy:
           type: string
+          format: UUID
         itemId:
           type: integer
           format: int64
