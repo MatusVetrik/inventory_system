@@ -55,7 +55,7 @@ public class OrderServiceImpl implements OrderService {
                 sourceWarehouse, itemInSourceWarehouse);
         ItemListEntry itemListEntrySource = existingItemSource.get(0);
         if (itemListEntrySource.getQuantity() - quantity < 0) { //if in source warehouse is not enough throw exception
-            throw new ItemExceedsWarehouseCapacityException(itemListEntrySource.getQuantity() - quantity);
+            throw new ItemExceedsWarehouseCapacityException(quantity - itemListEntrySource.getQuantity(), sourceWarehouse.getId());
         }
         //check if item already exists in the destination warehouse
         List<ItemListEntry> existingItemDestination = itemListEntryRepository.findItemListEntriesByWarehouseAndItem(
