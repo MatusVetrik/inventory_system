@@ -8,15 +8,10 @@ import com.vetrikos.inventory.system.exception.ItemExceedsWarehouseCapacityExcep
 import com.vetrikos.inventory.system.model.OrderRestDTO;
 import com.vetrikos.inventory.system.repository.ItemListEntryRepository;
 import com.vetrikos.inventory.system.repository.OrderRepository;
-import com.vetrikos.inventory.system.repository.WarehouseRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -31,10 +26,6 @@ public class OrderServiceImpl implements OrderService {
   private final UserService userService;
   private final ItemService itemService;
   private final WarehouseService warehouseService;
-  private final WarehouseRepository warehouseRepository;
-  private static final Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
-  @PersistenceContext
-  private EntityManager entityManager;
 
   @Override
   @NonNull
