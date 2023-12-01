@@ -20,7 +20,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Order"
+                  $ref: "#/components/schemas/OrderResponse"
         default:
           description: unexpected error
           content:
@@ -45,7 +45,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Order"
+                $ref: "#/components/schemas/OrderResponse"
         '400':
           description: Bad request
           content:
@@ -569,6 +569,47 @@ components:
         destinationId:
           type: integer
           format: int64
+
+    OrderResponse:
+      type: object
+      required:
+        - id
+        - createdBy
+        - createdByName
+        - itemId
+        - itemName
+        - quantity
+        - sourceId
+        - sourceName
+        - destinationId
+        - destinationName
+      properties:
+        id:
+          type: string
+          format: int64
+        createdBy:
+          type: string
+          format: UUID
+        createdByName:
+          type: string
+        itemId:
+          type: integer
+          format: int64
+        itemName:
+          type: string
+        quantity:
+          type: integer
+          format: int64
+        sourceId:
+          type: integer
+          format: int64
+        sourceName:
+          type: string
+        destinationId:
+          type: integer
+          format: int64
+        destinationName:
+          type: string
 
     User:
       type: object
