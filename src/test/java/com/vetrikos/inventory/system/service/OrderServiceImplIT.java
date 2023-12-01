@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThrows;
 import com.vetrikos.inventory.system.config.CustomPostgreSQLContainer;
 import com.vetrikos.inventory.system.config.IntegrationTest;
 import com.vetrikos.inventory.system.config.InventoryKeycloakContainer;
+import com.vetrikos.inventory.system.config.MockCustomJwtUser;
 import com.vetrikos.inventory.system.entity.Item;
 import com.vetrikos.inventory.system.entity.ItemListEntry;
 import com.vetrikos.inventory.system.entity.Order;
@@ -109,6 +110,7 @@ class OrderServiceImplIT {
     }
 
     @Test
+    @MockCustomJwtUser
     void createOrder() {
         warehouse = warehouseRepository.save(warehouse);
         warehouse2 = warehouseRepository.save(warehouse2);
@@ -141,6 +143,7 @@ class OrderServiceImplIT {
     }
 
     @Test
+    @MockCustomJwtUser
     void shouldNotCreateOrderNoItems() {
         warehouse = warehouseRepository.save(warehouse);
         warehouse3 = warehouseRepository.save(warehouse2);
@@ -167,6 +170,7 @@ class OrderServiceImplIT {
         Assertions.assertTrue(actualMessage.contains(expectedMessage));
     }
     @Test
+    @MockCustomJwtUser
     void shouldNotCreateOrderNoCapacity() {
         warehouse = warehouseRepository.save(warehouse);
         warehouse3 = warehouseRepository.save(warehouse3);
