@@ -9,11 +9,13 @@ import com.vetrikos.inventory.system.model.OrderRestDTO;
 import com.vetrikos.inventory.system.repository.ItemListEntryRepository;
 import com.vetrikos.inventory.system.repository.OrderRepository;
 import jakarta.transaction.Transactional;
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +36,9 @@ public class OrderServiceImpl implements OrderService {
     @NonNull
     @Transactional
     public Order createOrder(OrderRestDTO requestRestDTO) {
+        String principalUuid = ((Jwt) SecurityContextHolder.getContext().getAuthentication()
+            .getPrincipal()).getSubject();
+
         Warehouse sourceWarehouse = warehouseService.findById(requestRestDTO.getSourceId());
         Warehouse destinationWarehouse = warehouseService.findById(requestRestDTO.getDestinationId());
         Item itemInSourceWarehouse = itemService.findItemInWarehouse(requestRestDTO.getSourceId(), requestRestDTO.getItemId());
@@ -73,7 +78,7 @@ public class OrderServiceImpl implements OrderService {
         itemListEntryRepository.save(itemListEntrySource);
 
         Order order = Order.builder()
-                .createdBy(userService.findById(requestRestDTO.getCreatedBy()))
+                .createdBy(userService.findById(UUID.fromString(principalUuid)))
                 .item(itemService.findItemInWarehouse(requestRestDTO.getSourceId(), requestRestDTO.getItemId()))
                 .quantity(requestRestDTO.getQuantity())
                 .fromWarehouse(warehouseService.findById(requestRestDTO.getSourceId()))
