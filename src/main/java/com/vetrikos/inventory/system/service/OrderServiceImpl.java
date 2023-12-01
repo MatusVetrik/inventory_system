@@ -38,7 +38,7 @@ public class OrderServiceImpl implements OrderService {
         Warehouse destinationWarehouse = warehouseService.findById(requestRestDTO.getDestinationId());
         Item itemInSourceWarehouse = itemService.findItemInWarehouse(requestRestDTO.getSourceId(), requestRestDTO.getItemId());
         Long quantity = requestRestDTO.getQuantity();
-        Long itemSize = itemService.findItemInWarehouse(requestRestDTO.getSourceId(), requestRestDTO.getItemId()).getSize();
+        Long itemSize = itemInSourceWarehouse.getSize();
         Long itemsCapacity = itemSize * quantity;
         Long currentCapacityDestination = calculateCurrentCapacity(destinationWarehouse);
         //check if the capacity of the destination warehouse exceeds the capacity of the source warehouse

@@ -43,7 +43,7 @@ public class ItemServiceImpl implements ItemService {
     public List<Item> findAll() {
         return itemRepository.findAll();
     }
-    
+
     @NonNull
     @Override
     public List<Item> findItemsInWarehouse(Long warehouseId) {
@@ -63,7 +63,7 @@ public class ItemServiceImpl implements ItemService {
 
         return new ArrayList<>(itemsInWarehouse);
     }
-
+    
     @NonNull
     @Override
     public Item findItemInWarehouse(Long warehouseId, Long itemId) {
