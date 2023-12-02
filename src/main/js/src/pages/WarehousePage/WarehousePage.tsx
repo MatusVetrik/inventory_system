@@ -1,5 +1,13 @@
 import {useParams} from "react-router-dom";
-import {DataGrid, GridRowModel, GridRowModes, GridRowModesModel, GridRowsProp,} from "@mui/x-data-grid";
+import {
+    DataGrid,
+    GridColDef,
+    GridRowModel,
+    GridRowModes,
+    GridRowModesModel,
+    GridRowsProp,
+    GridValidRowModel,
+} from "@mui/x-data-grid";
 import {ReactElement, useEffect, useState} from "react";
 import ToolbarWarehouseItems from "./components/ToolbarWarehouseItems.tsx";
 import {deleteWarehouseItem, getListWarehouseItems, updateWarehouseItem} from "../../client/warehouseItemClient.ts";
@@ -9,10 +17,10 @@ import GetActions from "../../components/GetActions/GetActions.tsx";
 import useClientFetch from "../../hooks/useClientFetch.ts";
 import {getWarehouseById} from "../../client/warehouseClient.ts";
 import {CircularProgress} from "@mui/material";
-import keycloak from "../../keycloak/keycloak";
-import {UserRoles} from "../../model/UserRoles";
 import Users from "./users/Users.tsx";
 import {useToast} from "../../components/Toast/Toast";
+import keycloak from "../../keycloak/keycloak.ts";
+import {UserRoles} from "../../model/UserRoles.ts";
 
 const WarehousePage = (): ReactElement => {
     const {warehouseId} = useParams<{
@@ -21,9 +29,9 @@ const WarehousePage = (): ReactElement => {
 
     const [rows, setRows] = useState<GridRowsProp>([]);
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
-    const [columns, setColumns] = useState<any[]>([])
     const {showToast} = useToast();
     const {data: warehouse} = useClientFetch(() => getWarehouseById(+warehouseId!), []);
+    const [allowed, setIsAllowed] = useState<boolean>(false);
     const {
         data: warehouseItemsList,
         refetch
@@ -32,55 +40,6 @@ const WarehousePage = (): ReactElement => {
     useEffect(() => {
         if (warehouseItemsList) setRows(warehouseItemsList);
     }, [warehouseItemsList])
-
-    useEffect(() => {
-        setColumns([
-            {
-                field: 'name',
-                headerName: 'Name',
-                flex: 1,
-                headerAlign: 'left',
-                align: 'left',
-                editable: true,
-            },
-            {
-                field: 'size',
-                headerName: 'Size',
-                type: 'number',
-                flex: 1,
-                headerAlign: 'left',
-                align: 'left',
-                editable: true,
-            },
-            {
-                field: 'quantity',
-                headerName: 'Quantity',
-                type: 'number',
-                flex: 1,
-                headerAlign: 'left',
-                align: 'left',
-                editable: true,
-            },
-            {
-                field: 'actions',
-                type: 'actions',
-                headerName: 'Actions',
-                headerAlign: 'right',
-                align: 'right',
-                flex: 1,
-                cellClassName: 'actions',
-                getActions: ({id}: {
-                    id: number
-                }) => GetActions({
-                    id,
-                    rowModesModel,
-                    setRowModesModel,
-                    handleDeleteClick,
-                    handleCancelClick
-                }),
-            }]
-        )
-    }, [])
 
     const handleDeleteClick = (id: number) => async () => {
         try {
@@ -123,35 +82,59 @@ const WarehousePage = (): ReactElement => {
         }
     };
 
-
     useEffect(() => {
         keycloak.loadUserInfo().then(() => {
             const roles = (keycloak?.userInfo as any)?.roles?.includes(UserRoles.ROLE_ADMIN) || (keycloak?.userInfo as any)?.roles?.includes(UserRoles.ROLE_MANAGER)
-
-            if (!roles) {
-                setColumns([
-                    {
-                        field: 'name',
-                        headerName: 'Name',
-                        editable: true,
-                    },
-                    {
-                        field: 'size',
-                        headerName: 'Size',
-                        type: 'number',
-                        editable: true,
-                    },
-                    {
-                        field: 'quantity',
-                        headerName: 'Quantity',
-                        type: 'number',
-                        editable: true,
-                    },
-                ])
-            }
+            setIsAllowed(!!roles)
         })
     }, []);
 
+
+    const columns = [
+        {
+            field: 'name',
+            headerName: 'Name',
+            flex: 1,
+            headerAlign: 'left',
+            align: 'left',
+            editable: true,
+        },
+        {
+            field: 'size',
+            headerName: 'Size',
+            type: 'number',
+            flex: 1,
+            headerAlign: 'left',
+            align: 'left',
+            editable: true,
+        },
+        {
+            field: 'quantity',
+            headerName: 'Quantity',
+            type: 'number',
+            flex: 1,
+            headerAlign: 'left',
+            align: 'left',
+            editable: true,
+        },
+        allowed && {
+            field: 'actions',
+            type: 'actions',
+            headerName: 'Actions',
+            headerAlign: 'right',
+            align: 'right',
+            flex: 1,
+            cellClassName: 'actions',
+            getActions: ({id}: {
+                id: number
+            }) => GetActions({
+                id,
+                rowModesModel,
+                setRowModesModel,
+                handleDeleteClick,
+                handleCancelClick,
+            }),
+        }] as GridColDef<GridValidRowModel>[]
 
     return (
         <div style={{height: 600, width: '80%', textAlign: 'center'}}>
