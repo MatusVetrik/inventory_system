@@ -103,7 +103,7 @@ const WarehousePage = () => {
             flex: 1,
             editable: true,
         },
-        allowed && {
+        allowed ? {
             field: 'actions',
             type: 'actions',
             headerName: 'Actions',
@@ -119,7 +119,12 @@ const WarehousePage = () => {
                 setRowModesModel,
                 handleDeleteClick,
                 handleCancelClick,
-            }),
+            })
+        } : {
+            field: 'actions',
+            headerName: '',
+            headerAlign: 'right',
+            align: 'right',
         }] as GridColDef<GridValidRowModel>[]
 
     return (

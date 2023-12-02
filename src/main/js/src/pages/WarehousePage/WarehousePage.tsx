@@ -117,7 +117,7 @@ const WarehousePage = (): ReactElement => {
             align: 'left',
             editable: true,
         },
-        allowed && {
+        allowed ? {
             field: 'actions',
             type: 'actions',
             headerName: 'Actions',
@@ -134,6 +134,11 @@ const WarehousePage = (): ReactElement => {
                 handleDeleteClick,
                 handleCancelClick,
             }),
+        } : {
+            field: 'actions',
+            headerName: '',
+            headerAlign: 'right',
+            align: 'right',
         }] as GridColDef<GridValidRowModel>[]
 
     return (
