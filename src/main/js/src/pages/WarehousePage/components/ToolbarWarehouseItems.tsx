@@ -8,6 +8,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import {TextField} from "@mui/material";
 import {UserRoles} from "../../../model/UserRoles";
 import PrivateComponent from "../../../components/PrivateComponent";
+import {useToast} from "../../../components/Toast/Toast";
 
 interface Props {
     warehouseId: number,
@@ -21,11 +22,18 @@ export default ({warehouseId, refetch}: Props): ReactElement => {
 
     const handleClick = async () => setVisible(!visible);
 
+    const { showToast } = useToast();
+
     const handleSubmit = async (): Promise<void> => {
-        await createWarehouseItem(warehouseId, newItem);
-        refetch();
-        setVisible(false);
-        setNewItem({name: "", quantity: 0, size: 0});
+        try {
+            await createWarehouseItem(warehouseId, newItem);
+            refetch();
+            setVisible(false);
+            setNewItem({ name: "", quantity: 0, size: 0 });
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || "An error occurred";
+            showToast(errorMessage, { type: 'error' });
+        }
     }
 
     const setWarehouseAttribute = (attr: 'name' | 'size' | 'quantity', value: string | number) => setNewItem(prev => ({

@@ -2,6 +2,7 @@ import {useCallback, useState} from 'react';
 import {ClientResponse} from '../model/ClientResponse';
 import {ClientStatus} from "../model/ClientStatus.ts";
 import {ClientStatusError} from "../model/ClientStatusError.ts";
+import {useToast} from "../components/Toast/Toast";
 
 interface ReturnType<T> {
     data: T | null;
@@ -21,6 +22,7 @@ export default <T>(client: ClientCall<T>): ReturnType<T> => {
         responseCode: 0,
     });
     const [data, setData] = useState<T | null>(null);
+    const { showToast } = useToast();
 
     const wrapClient = useCallback(
         async (...args: any) => {
@@ -63,12 +65,13 @@ export default <T>(client: ClientCall<T>): ReturnType<T> => {
 
                 setData(null);
                 setStatus(newStatus);
-
+                showToast(`Error: ${e.message}`, { type: 'error' });
+                console.log(e.message)
                 return Promise.reject();
             }
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [client],
+        [client,showToast],
     );
 
     return {
