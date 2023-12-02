@@ -1,4 +1,13 @@
-import {DataGrid, GridRowModel, GridRowModes, GridRowModesModel, GridRowParams, GridRowsProp,} from '@mui/x-data-grid';
+import {
+    DataGrid,
+    GridColDef,
+    GridRowModel,
+    GridRowModes,
+    GridRowModesModel,
+    GridRowParams,
+    GridRowsProp,
+    GridValidRowModel,
+} from '@mui/x-data-grid';
 import routes from "../../routing/routes";
 import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
@@ -10,58 +19,19 @@ import GetActions from "../../components/GetActions/GetActions.tsx";
 import useClientFetch from "../../hooks/useClientFetch.ts";
 import keycloak from "../../keycloak/keycloak";
 import {useToast} from "../../components/Toast/Toast";
+import {UserRoles} from "../../model/UserRoles.ts";
 
 const WarehousePage = () => {
     const navigate = useNavigate();
 
     const [rows, setRows] = useState<GridRowsProp>([]);
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
-    const [columns, setColumns] = useState<any[]>([])
+    const [allowed, setIsAllowed] = useState<boolean>(false);
     const {data: warehouseList, refetch} = useClientFetch(() => getListWarehouses(), []);
     useEffect(() => {
         if (warehouseList) setRows(warehouseList);
     }, [warehouseList])
     const {showToast} = useToast();
-
-    useEffect(() => {
-        setColumns([
-            {
-                field: 'name',
-                headerName: 'Name',
-                headerAlign: 'left',
-                align: 'left',
-                flex: 1,
-                editable: true,
-            },
-            {
-                field: 'capacity',
-                headerName: 'Capacity',
-                type: 'number',
-                headerAlign: 'left',
-                align: 'left',
-                flex: 1,
-                editable: true,
-            },
-            {
-                field: 'actions',
-                type: 'actions',
-                headerName: 'Actions',
-                headerAlign: 'right',
-                align: 'right',
-                flex: 1,
-                cellClassName: 'actions',
-                getActions: ({id}: {
-                    id: number
-                }) => GetActions({
-                    id,
-                    rowModesModel,
-                    setRowModesModel,
-                    handleDeleteClick,
-                    handleCancelClick
-                }),
-            }]
-        )
-    }, [])
 
     const handleDeleteClick = (id: number) => async () => {
         try {
@@ -110,27 +80,47 @@ const WarehousePage = () => {
 
     useEffect(() => {
         keycloak.loadUserInfo().then(() => {
-            const roles = (keycloak?.userInfo as any)?.roles?.includes("ADMIN")
-
-            if (!roles) {
-                setColumns([
-                    {
-                        field: 'name',
-                        headerName: 'Name',
-                        width: 200,
-                        editable: true,
-                    },
-                    {
-                        field: 'capacity',
-                        headerName: 'Capacity',
-                        type: 'number',
-                        width: 200,
-                        editable: true,
-                    },
-                ])
-            }
+            const roles = (keycloak?.userInfo as any)?.roles?.includes(UserRoles.ROLE_ADMIN)
+            setIsAllowed(!!roles);
         })
     }, []);
+
+    const columns = [
+        {
+            field: 'name',
+            headerName: 'Name',
+            headerAlign: 'left',
+            align: 'left',
+            flex: 1,
+            editable: true,
+        },
+        {
+            field: 'capacity',
+            headerName: 'Capacity',
+            type: 'number',
+            headerAlign: 'left',
+            align: 'left',
+            flex: 1,
+            editable: true,
+        },
+        allowed && {
+            field: 'actions',
+            type: 'actions',
+            headerName: 'Actions',
+            headerAlign: 'right',
+            align: 'right',
+            flex: 1,
+            cellClassName: 'actions',
+            getActions: ({id}: {
+                id: number
+            }) => GetActions({
+                id,
+                rowModesModel,
+                setRowModesModel,
+                handleDeleteClick,
+                handleCancelClick,
+            }),
+        }] as GridColDef<GridValidRowModel>[]
 
     return (
         <div style={{height: 600, width: '80%', textAlign: 'center'}}>
