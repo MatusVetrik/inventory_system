@@ -4,7 +4,7 @@ import {BASE_PATH} from "inventory-client-ts-axios/dist/esm/base";
 
 
 export const axiosInstance: AxiosInstance = axios.create({
-  baseURL: "http://localhost:8090/api"
+  baseURL: BASE_PATH
 })
 
 axiosInstance.interceptors.request.use(
