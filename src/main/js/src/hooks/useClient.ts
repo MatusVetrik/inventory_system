@@ -22,7 +22,7 @@ export default <T>(client: ClientCall<T>): ReturnType<T> => {
         responseCode: 0,
     });
     const [data, setData] = useState<T | null>(null);
-    const { showToast } = useToast();
+    const {showToast} = useToast();
 
     const wrapClient = useCallback(
         async (...args: any) => {
@@ -65,13 +65,12 @@ export default <T>(client: ClientCall<T>): ReturnType<T> => {
 
                 setData(null);
                 setStatus(newStatus);
-                showToast(`Error: ${e.message}`, { type: 'error' });
-                console.log(e.message)
+                showToast(`Error: ${e.message}`, {type: 'error'});
                 return Promise.reject();
             }
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [client,showToast],
+        [client, showToast],
     );
 
     return {

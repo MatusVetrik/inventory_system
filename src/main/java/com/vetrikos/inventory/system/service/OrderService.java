@@ -15,5 +15,4 @@ public interface OrderService {
 
     @NonNull
     Order createOrder(@NotNull OrderRestDTO requestRestDTO);
-
 }

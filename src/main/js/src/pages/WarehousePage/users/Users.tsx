@@ -2,11 +2,11 @@ import {DataGrid, GridActionsCellItem, GridRowModel, GridRowModesModel, GridRows
 import {ReactElement, useEffect, useState} from "react";
 import keycloak from "../../../keycloak/keycloak.ts";
 import {handleRowModesModelChange} from "../../../functions/handlers.ts";
-import useClientFetch from "../../../hooks/useClientFetch.ts";
 import {deleteWarehouseUser, getWarehouseUsers} from "../../../client/warehouseUserClient.ts";
 import {UserRoles} from "../../../model/UserRoles.ts";
 import ToolbarWarehouseUsers from "./ToolbarWarehouseUsers.tsx";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
+import useClientFetch from "../../../hooks/useClientFetch.ts";
 
 interface Props {
     warehouseId: number
@@ -30,20 +30,26 @@ export default ({warehouseId}: Props): ReactElement => {
             {
                 field: 'fullName',
                 headerName: 'Full name',
-                width: 200,
+                flex: 1,
+                headerAlign: 'left',
+                align: 'left',
                 editable: true,
             },
             {
                 field: 'username',
                 headerName: 'Username',
-                width: 200,
+                flex: 1,
+                headerAlign: 'left',
+                align: 'left',
                 editable: true,
             },
             {
                 field: 'actions',
                 type: 'actions',
                 headerName: 'Actions',
-                width: 200,
+                flex: 1,
+                headerAlign: 'right',
+                align: 'right',
                 cellClassName: 'actions',
                 getActions: ({id}: {
                     id: string
@@ -92,7 +98,7 @@ export default ({warehouseId}: Props): ReactElement => {
 
 
     return (
-        <div style={{height: 600, marginTop: '40px', paddingBottom: '100px'}}>
+        <div style={{height: 600, width: '100%', marginTop: '40px', paddingBottom: '100px'}}>
             <h3>Users</h3>
             <DataGrid
                 rows={rows}

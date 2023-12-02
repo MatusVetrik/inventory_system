@@ -1,15 +1,16 @@
 import {ClientResponse} from "../model/ClientResponse.ts";
+import {Configuration, Order, OrderResponse, OrdersApi} from "inventory-client-ts-axios";
+import {axiosInstance} from "./axiosInstance.ts";
 
-export const getListOrders = async (): Promise<ClientResponse<void>> => {
-    return {responseCode: 200};
-};
-export const createOrder = async (): Promise<void> => {
-};
+const client = new OrdersApi(new Configuration(), '', axiosInstance);
 
-export const getOrderById = async (): Promise<void> => {
+export const getListOrders = async (): Promise<ClientResponse<OrderResponse[]>> => {
+    const {data, status} = await client.listOrders();
+    return {data, responseCode: status}
 };
-
-export const deleteOrder = async (): Promise<void> => {
+export const createOrder = async (order: Order): Promise<ClientResponse<OrderResponse>> => {
+    const {data, status} = await client.createOrder(order)
+    return {data, responseCode: status};
 };
 
 

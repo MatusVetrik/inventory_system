@@ -6,7 +6,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import LogoutIcon from '@mui/icons-material/Logout';
-import {Container, Grid, Tooltip} from "@mui/material";
+import {Tooltip} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import AppBar from "./components/AppBar";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -32,7 +32,7 @@ export default ({children}: Props) => {
 
     return (
         <ThemeProvider theme={defaultTheme}>
-            <Box sx={{display: 'flex'}}>
+            <Box>
                 <CssBaseline/>
                 <AppBar position="fixed" open={false}>
                     <Toolbar sx={{pr: '24px',}}>
@@ -52,6 +52,7 @@ export default ({children}: Props) => {
                             color="inherit"
                             noWrap
                             sx={{flexGrow: 1}}
+                            style={{fontWeight: 'bold'}}
                         >
                             Inventory system
                         </Typography>
@@ -67,16 +68,8 @@ export default ({children}: Props) => {
                         </Tooltip>
                     </Toolbar>
                 </AppBar>
-                <Box component="main" sx={{flexGrow: 1, p: 3}}>
-                    <Container maxWidth="lg" sx={{mt: 4, mb: 4}}>
-                        <Grid alignItems="center"
-                              justifyContent="center"
-                              container spacing={3}>
-                            <Grid item xs={12} md={8} lg={9}>
-                                {children}
-                            </Grid>
-                        </Grid>
-                    </Container>
+                <Box component="main" style={{margin: '40px', display: 'flex', justifyContent: 'center'}}>
+                    {children}
                 </Box>
             </Box>
         </ThemeProvider>
