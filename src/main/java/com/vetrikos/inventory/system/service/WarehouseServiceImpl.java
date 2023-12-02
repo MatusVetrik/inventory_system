@@ -5,6 +5,7 @@ import com.vetrikos.inventory.system.entity.User;
 import com.vetrikos.inventory.system.entity.Warehouse;
 import com.vetrikos.inventory.system.exception.ItemExceedsWarehouseCapacityException;
 import com.vetrikos.inventory.system.exception.UserNotFoundException;
+import com.vetrikos.inventory.system.exception.WarehouseHasItemsException;
 import com.vetrikos.inventory.system.exception.WarehouseNotFoundException;
 import com.vetrikos.inventory.system.model.WarehouseRequestRestDTO;
 import com.vetrikos.inventory.system.model.WarehouseUpdateRequestRestDTO;
@@ -114,6 +115,9 @@ public class WarehouseServiceImpl implements WarehouseService {
   public void deleteWarehouse(Long warehouseId) {
     Warehouse warehouse = warehouseRepository.findById(warehouseId)
         .orElseThrow(() -> new WarehouseNotFoundException(warehouseId));
+    if(warehouse.getEntries().size() > 0){
+      throw new WarehouseHasItemsException(warehouse.getEntries().size());
+    }
     warehouse.getUsers().forEach(user -> user.setWarehouse(null));
     warehouseRepository.delete(warehouse);
   }
