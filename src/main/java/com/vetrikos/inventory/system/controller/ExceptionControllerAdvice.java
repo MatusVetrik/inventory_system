@@ -3,6 +3,7 @@ package com.vetrikos.inventory.system.controller;
 import com.vetrikos.inventory.system.exception.ItemExceedsWarehouseCapacityException;
 import com.vetrikos.inventory.system.exception.ItemNotFoundException;
 import com.vetrikos.inventory.system.exception.UserNotFoundException;
+import com.vetrikos.inventory.system.exception.WarehouseHasItemsException;
 import com.vetrikos.inventory.system.exception.WarehouseNotFoundException;
 import com.vetrikos.inventory.system.model.BadRequestErrorsInnerRestDTO;
 import com.vetrikos.inventory.system.model.BadRequestRestDTO;
@@ -40,7 +41,7 @@ public class ExceptionControllerAdvice {
   }
 
   @ExceptionHandler(value = {ItemExceedsWarehouseCapacityException.class,
-      HttpMessageNotReadableException.class})
+      HttpMessageNotReadableException.class, WarehouseHasItemsException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   protected ResponseEntity<Object> handleBadRequestException(
       RuntimeException exception) {
