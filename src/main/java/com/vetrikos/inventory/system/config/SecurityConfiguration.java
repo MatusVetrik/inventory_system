@@ -77,9 +77,7 @@ public class SecurityConfiguration {
                           .map(role -> new SimpleGrantedAuthority(
                               GRANTED_AUTHORITY_ROLE_PREFIX + role))
                   ).toList();
-                  return new JwtAuthenticationToken(jwt, authorities,
-                      parseClaimAsStringOrElse(jwt, JWT_PREFERRED_USERNAME_CLAIM_NAME,
-                          jwt.getSubject()));
+                  return new JwtAuthenticationToken(jwt, authorities, jwt.getSubject());
                 })));
 
     http.headers(httpSecurityHeadersConfigurer -> httpSecurityHeadersConfigurer.frameOptions(
