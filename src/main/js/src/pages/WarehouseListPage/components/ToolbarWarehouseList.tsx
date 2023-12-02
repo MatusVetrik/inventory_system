@@ -8,6 +8,7 @@ import {WarehouseRequest} from "inventory-client-ts-axios";
 import {createWarehouse} from "../../../client/warehouseClient.ts";
 import PrivateComponent from "../../../components/PrivateComponent";
 import {UserRoles} from "../../../model/UserRoles";
+import {useToast} from "../../../components/Toast/Toast";
 
 interface Props {
     refetch: () => void
@@ -16,14 +17,19 @@ interface Props {
 export default ({refetch}: Props): ReactElement => {
     const [visible, setVisible] = useState<boolean>(false);
     const [newWarehouse, setNewWarehouse] = useState<WarehouseRequest>({capacity: 0, name: ""});
+    const { showToast } = useToast();
 
     const handleClick = async () => setVisible(!visible);
 
     const handleSubmit = async (): Promise<void> => {
-        await createWarehouse(newWarehouse);
-        refetch();
-        setVisible(false);
-        setNewWarehouse({capacity: 0, name: ""});
+        try {
+            await createWarehouse(newWarehouse);
+            refetch();
+            setVisible(false);
+            setNewWarehouse({capacity: 0, name: ""});
+        } catch (error) {
+            showToast(`Error: ${error.message}`, { type: 'error' });
+        }
     }
 
     const setWarehouseAttribute = (attr: 'name' | 'capacity', value: string | number) => setNewWarehouse(prev => ({

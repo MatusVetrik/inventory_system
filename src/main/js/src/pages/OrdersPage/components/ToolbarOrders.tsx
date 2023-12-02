@@ -11,6 +11,7 @@ import {createOrder} from "../../../client/orderClient.ts";
 import {Order} from "inventory-client-ts-axios";
 import {getListWarehouses} from "../../../client/warehouseClient.ts";
 import {getListWarehouseItems} from "../../../client/warehouseItemClient.ts";
+import {useToast} from "../../../components/Toast/Toast";
 
 interface Props {
     refetch: () => void,
@@ -21,6 +22,7 @@ export default ({refetch}: Props): ReactElement => {
     const [visible, setVisible] = useState<boolean>(false);
     const [order, setOrder] = useState<Order>(null);
     const [sourceWarehouseId, setSourceWarhouseId] = useState<number>(0);
+    const { showToast } = useToast();
 
     const {data: warehouseList} = useClientFetch(() => getListWarehouses(), []);
 
@@ -29,13 +31,15 @@ export default ({refetch}: Props): ReactElement => {
     const handleClick = async () => setVisible(!visible);
 
     const handleSubmit = async (): Promise<void> => {
-        console.log(order)
-        await createOrder();
-        refetch();
-        setVisible(false);
-        setOrder(null);
+        try {
+            await createOrder();
+            refetch();
+            setVisible(false);
+            setOrder(null);
+        } catch (error) {
+            showToast(`Error: ${error.message}`, { type: 'error' });
+        }
     }
-
     const handleChange = (event: SelectChangeEvent | ChangeEvent<any>, field: keyof Order) => {
         setOrder((prev: Order) => ({
             ...prev,
