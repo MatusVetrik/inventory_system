@@ -544,19 +544,11 @@ components:
     Order:
       type: object
       required:
-        - id
-        - createdBy
         - itemId
         - quantity
         - sourceId
         - destinationId
       properties:
-        id:
-          type: string
-          format: int64
-        createdBy:
-          type: string
-          format: UUID
         itemId:
           type: integer
           format: int64
