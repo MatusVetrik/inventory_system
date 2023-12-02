@@ -7,8 +7,8 @@ import {FormControl, InputLabel, MenuItem, Select, SelectChangeEvent} from "@mui
 import {UserRoles} from "../../../model/UserRoles.ts";
 import PrivateComponent from "../../../components/PrivateComponent";
 import {addWarehouseUser} from "../../../client/warehouseUserClient.ts";
-import useClientFetch from "../../../hooks/useClientFetch.ts";
 import {getListUsers} from "../../../client/userClient.ts";
+import useClientFetch from "../../../hooks/useClientFetch.ts";
 
 interface Props {
     warehouseId: number,
@@ -91,7 +91,9 @@ export default ({warehouseId, refetch}: Props): ReactElement => {
                         </Select>
                     </FormControl>
                     <Button type="submit" onClick={handleSubmit} style={{maxHeight: "40px"}}
-                            variant="contained">Submit</Button>
+                            variant="contained" disabled={!userId}>
+                        Submit
+                    </Button>
                 </div>
             )
             }

@@ -17,7 +17,7 @@ interface Props {
 export default ({refetch}: Props): ReactElement => {
     const [visible, setVisible] = useState<boolean>(false);
     const [newWarehouse, setNewWarehouse] = useState<WarehouseRequest>({capacity: 0, name: ""});
-    const { showToast } = useToast();
+    const {showToast} = useToast();
 
     const handleClick = async () => setVisible(!visible);
 
@@ -27,8 +27,8 @@ export default ({refetch}: Props): ReactElement => {
             refetch();
             setVisible(false);
             setNewWarehouse({capacity: 0, name: ""});
-        } catch (error) {
-            showToast(`Error: ${error.message}`, { type: 'error' });
+        } catch (error: any) {
+            showToast(`${error.response.data.code} - ${error.response.data.message}`, {type: 'error'});
         }
     }
 
@@ -36,6 +36,8 @@ export default ({refetch}: Props): ReactElement => {
         ...prev,
         [attr]: value
     }))
+
+    const isButtonDisabled = !(newWarehouse.name && newWarehouse.capacity)
 
     return (
         <GridToolbarContainer>
@@ -47,26 +49,26 @@ export default ({refetch}: Props): ReactElement => {
             }}>
                 <GridToolbar style={{paddingTop: "10px"}}/>
                 <PrivateComponent allowedRoles={[UserRoles.ROLE_ADMIN]}>
-                {
-                    visible ?
-                        <Button
-                            variant="contained"
-                            color="error"
-                            startIcon={<CloseIcon/>}
-                            style={{height: "30px"}}
-                            onClick={handleClick}>
-                            Cancel
-                        </Button>
-                        : <Button
-                            variant="contained"
-                            color="primary"
-                            startIcon={<AddIcon/>}
-                            style={{height: "30px"}}
-                            onClick={handleClick}>
-                            Add warehouse
-                        </Button>
+                    {
+                        visible ?
+                            <Button
+                                variant="contained"
+                                color="error"
+                                startIcon={<CloseIcon/>}
+                                style={{height: "30px"}}
+                                onClick={handleClick}>
+                                Cancel
+                            </Button>
+                            : <Button
+                                variant="contained"
+                                color="primary"
+                                startIcon={<AddIcon/>}
+                                style={{height: "30px"}}
+                                onClick={handleClick}>
+                                Add warehouse
+                            </Button>
 
-                }
+                    }
                 </PrivateComponent>
             </div>
             {visible && (
@@ -96,7 +98,9 @@ export default ({refetch}: Props): ReactElement => {
                             type="number"
                             variant="outlined" size="small"/>
                     </div>
-                    <Button type="submit" onClick={handleSubmit} variant="contained">Submit</Button>
+                    <Button type="submit" onClick={handleSubmit} variant="contained" disabled={isButtonDisabled}>
+                        Submit
+                    </Button>
                 </div>
             )
             }

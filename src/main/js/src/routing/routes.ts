@@ -1,5 +1,6 @@
 export default {
-    index: '/app/',
+    index: '/',
+    app: '/app/',
     profile: '/app/profile',
     warehouses: '/app/warehouse-list',
     warehouse: {
@@ -10,4 +11,5 @@ export default {
         }
     },
     orders: '/app/orders',
+    pageNotFound: '/app/page-not-found'
 };

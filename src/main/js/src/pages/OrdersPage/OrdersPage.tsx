@@ -1,136 +1,87 @@
-import {
-  DataGrid,
-  GridActionsCellItem,
-  GridRowModel,
-  GridRowModesModel,
-  GridRowsProp
-} from '@mui/x-data-grid';
+import {DataGrid, GridRowModel, GridRowModesModel, GridRowsProp} from '@mui/x-data-grid';
 import {useEffect, useState} from "react";
-import useClientFetch from "../../hooks/useClientFetch.ts";
-import {deleteOrder, getListOrders} from "../../client/orderClient.ts";
-import DeleteIcon from "@mui/icons-material/DeleteOutlined";
+import {getListOrders} from "../../client/orderClient.ts";
 import keycloak from "../../keycloak/keycloak.ts";
 import {UserRoles} from "../../model/UserRoles.ts";
 import {handleRowModesModelChange} from "../../functions/handlers.ts";
 import ToolbarOrders from "./components/ToolbarOrders.tsx";
-import {ToastProvider, useToast} from "../../components/Toast/Toast";
+import useClientFetch from "../../hooks/useClientFetch.ts";
 
 const initColumns = [
-  {
-    field: 'id',
-    headerName: 'ID',
-    width: 200,
-    editable: true,
-  },
-  {
-    field: 'createdBy',
-    headerName: 'Created by',
-    width: 200,
-    editable: true,
-  },
-  {
-    field: 'itemId',
-    headerName: 'Item ID',
-    width: 200,
-    editable: true,
-  },
-  {
-    field: 'quantity',
-    headerName: 'Quantity',
-    width: 200,
-    editable: true,
-  },
-  {
-    field: 'sourceId',
-    headerName: 'Source ID',
-    width: 200,
-    editable: true,
-  },
-  {
-    field: 'destinationId',
-    headerName: 'Destination ID',
-    width: 200,
-    editable: true,
-  },
+    {
+        field: 'id',
+        headerName: 'ID',
+        flex: 0.5,
+    },
+    {
+        field: 'createdByName',
+        headerName: 'Created by',
+        flex: 1,
+    },
+    {
+        field: 'itemName',
+        headerName: 'Item',
+        flex: 1,
+    },
+    {
+        field: 'quantity',
+        headerName: 'Quantity',
+        flex: 1,
+    },
+    {
+        field: 'sourceName',
+        headerName: 'Source',
+        flex: 1,
+    },
+    {
+        field: 'destinationName',
+        headerName: 'Destination',
+        flex: 1,
+    },
 ]
 
 const OrdersPage = () => {
-  const [rows, setRows] = useState<GridRowsProp>([]);
-  const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
-  const [columns, setColumns] = useState<GridRowModel[]>([])
+    const [rows, setRows] = useState<GridRowsProp>([]);
+    const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
+    const [columns, setColumns] = useState<GridRowModel[]>(initColumns)
 
-  const {data: orderList, refetch} = useClientFetch(() => getListOrders(), []);
+    const {data: orderList, refetch} = useClientFetch(() => getListOrders(), []);
 
-  useEffect(() => {
-    if (orderList) setRows(orderList);
-  }, [orderList])
+    useEffect(() => {
+        if (orderList) setRows(orderList);
+    }, [orderList])
 
-  useEffect(() => {
-    setColumns([
-      ...initColumns,
-      {
-        field: 'actions',
-        type: 'actions',
-        headerName: 'Actions',
-        width: 200,
-        cellClassName: 'actions',
-        getActions: ({id}: {
-          id: string
-        }) =>
-            ([<GridActionsCellItem
-                icon={<DeleteIcon/>}
-                label="Delete"
-                onClick={handleDeleteClick(id)}
-                color="inherit"
-            />]),
-      }]
-    )
-  }, [])
+    useEffect(() => {
+        keycloak.loadUserInfo().then(() => {
+            // @ts-ignore
+            const roles = keycloak?.userInfo?.roles?.includes(UserRoles.ROLE_ADMIN) || keycloak?.userInfo?.roles?.includes(UserRoles.ROLE_MANAGER)
 
-  const { showToast } = useToast();
+            if (!roles) {
+                setColumns(initColumns)
+            }
+        })
+    }, []);
 
-  const handleDeleteClick = (id: string) => async () => {
-    try {
-      await deleteOrder(); // Ensure you pass the 'id' to the deleteOrder function
-      refetch();
-      setRows(rows.filter((row) => row.id !== id));
-    } catch (error) {
-      showToast(`Error: ${error.message}`, { type: 'error' });
-    }
-  };
-
-  useEffect(() => {
-    keycloak.loadUserInfo().then(() => {
-      // @ts-ignore
-      const roles = keycloak?.userInfo?.roles?.includes(UserRoles.ROLE_ADMIN) || keycloak?.userInfo?.roles?.includes(UserRoles.ROLE_MANAGER)
-
-      if (!roles) {
-        setColumns(initColumns)
-      }
-    })
-  }, []);
-
-  return (
-        <div style={{height: 600, marginTop: '40px', paddingBottom: '100px'}}>
-          <h3>Orders</h3>
-          <DataGrid
-              rows={rows}
-              columns={columns as any}
-              editMode="row"
-              rowModesModel={rowModesModel}
-              onRowModesModelChange={(newModel) => handleRowModesModelChange(newModel, setRowModesModel)}
-              slots={{
-                toolbar: ToolbarOrders,
-              }}
-              slotProps={{
-                toolbar: {refetch},
-              }}
-              rowHeight={35}
-              autoPageSize
-          />
+    return (
+        <div style={{height: 600, width: '80%', paddingBottom: '100px'}}>
+            <h1>Orders</h1>
+            <DataGrid
+                rows={rows}
+                columns={columns as any}
+                editMode="row"
+                rowModesModel={rowModesModel}
+                onRowModesModelChange={(newModel) => handleRowModesModelChange(newModel, setRowModesModel)}
+                slots={{
+                    toolbar: ToolbarOrders,
+                }}
+                slotProps={{
+                    toolbar: {refetch},
+                }}
+                rowHeight={35}
+                autoPageSize
+            />
         </div>
-
-  );
+    );
 };
 
 export default OrdersPage;
