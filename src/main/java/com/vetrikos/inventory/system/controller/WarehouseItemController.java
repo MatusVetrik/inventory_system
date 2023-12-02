@@ -35,7 +35,8 @@ public class WarehouseItemController implements WarehouseItemsApi {
   }
 
   @Override
-  @PreAuthorize("hasAnyRole('" + Fields.ROLE_ADMIN + "','" + Fields.ROLE_MANAGER + "')")
+  @PreAuthorize("hasRole('" + Fields.ROLE_ADMIN
+      + "') || @warehouseRepository.checkUserExistsInWarehouse(T(java.util.UUID).fromString(authentication.name), #warehouseId)")
   public ResponseEntity<Void> deleteWarehouseItem(Long warehouseId, Long itemId) {
     itemService.deleteWarehouseItem(itemId, warehouseId);
     return ResponseEntity.noContent().build();
