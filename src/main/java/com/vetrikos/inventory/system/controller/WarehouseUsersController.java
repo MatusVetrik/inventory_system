@@ -31,14 +31,14 @@ public class WarehouseUsersController implements WarehouseUsersApi {
   }
 
   @Override
-  @PreAuthorize("hasAnyRole('" + Fields.ROLE_ADMIN + "','" + Fields.ROLE_MANAGER + "')")
+  @PreAuthorize("isAuthenticated()")
   public ResponseEntity<UserRestDTO> getWarehouseUserById(Long warehouseId, UUID userId) {
     return ResponseEntity.ok(
         userMapper.userToUserRestDTO(userService.findByWarehouseAndUserId(warehouseId, userId)));
   }
 
   @Override
-  @PreAuthorize("hasAnyRole('" + Fields.ROLE_ADMIN + "','" + Fields.ROLE_MANAGER + "')")
+  @PreAuthorize("isAuthenticated()")
   public ResponseEntity<List<UserRestDTO>> getWarehouseUsers(Long warehouseId) {
     return ResponseEntity.ok(
         userService.findAllByWarehouseId(warehouseId).stream().map(userMapper::userToUserRestDTO)

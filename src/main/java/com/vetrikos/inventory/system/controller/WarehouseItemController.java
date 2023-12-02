@@ -21,49 +21,52 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WarehouseItemController implements WarehouseItemsApi {
 
-    private final ItemService itemService;
-    private final ItemMapper itemMapper;
+  private final ItemService itemService;
+  private final ItemMapper itemMapper;
 
-    @Override
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<WarehouseItemRestDTO> createWarehouseItem(Long warehouseId,
-                                                                    WarehouseItemRequestRestDTO warehouseItemRequestRestDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(itemMapper.itemToWarehouseItemRestDTO(
-                        itemService.createItem(warehouseId, warehouseItemRequestRestDTO)));
-    }
+  @Override
+  @PreAuthorize("hasRole('" + Fields.ROLE_ADMIN
+      + "') || @warehouseRepository.checkUserExistsInWarehouse(T(java.util.UUID).fromString(authentication.name), #warehouseId)")
+  public ResponseEntity<WarehouseItemRestDTO> createWarehouseItem(Long warehouseId,
+      WarehouseItemRequestRestDTO warehouseItemRequestRestDTO) {
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(itemMapper.itemToWarehouseItemRestDTO(
+            itemService.createItem(warehouseId, warehouseItemRequestRestDTO)));
+  }
 
-    @Override
-    @PreAuthorize("hasAnyRole('" + Fields.ROLE_ADMIN + "','" + Fields.ROLE_MANAGER + "')")
-    public ResponseEntity<Void> deleteWarehouseItem(Long warehouseId, Long itemId) {
-        itemService.deleteWarehouseItem(itemId, warehouseId);
-        return ResponseEntity.noContent().build();
-    }
+  @Override
+  @PreAuthorize("hasRole('" + Fields.ROLE_ADMIN
+      + "') || @warehouseRepository.checkUserExistsInWarehouse(T(java.util.UUID).fromString(authentication.name), #warehouseId)")
+  public ResponseEntity<Void> deleteWarehouseItem(Long warehouseId, Long itemId) {
+    itemService.deleteWarehouseItem(itemId, warehouseId);
+    return ResponseEntity.noContent().build();
+  }
 
-    @Override
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<WarehouseItemRestDTO> getWarehouseItemById(Long warehouseId, Long itemId) {
-        Item item = itemService.findItemInWarehouse(warehouseId, itemId);
-        WarehouseItemRestDTO warehouseItemDTO = itemMapper.itemToWarehouseItemRestDTO(item);
-        return ResponseEntity.ok(warehouseItemDTO);
-    }
+  @Override
+  @PreAuthorize("isAuthenticated()")
+  public ResponseEntity<WarehouseItemRestDTO> getWarehouseItemById(Long warehouseId, Long itemId) {
+    Item item = itemService.findItemInWarehouse(warehouseId, itemId);
+    WarehouseItemRestDTO warehouseItemDTO = itemMapper.itemToWarehouseItemRestDTO(item);
+    return ResponseEntity.ok(warehouseItemDTO);
+  }
 
-    @Override
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<WarehouseItemRestDTO>> listWarehouseItems(Long warehouseId) {
-        List<Item> items = itemService.findItemsInWarehouse(warehouseId);
-        List<WarehouseItemRestDTO> warehouseItemDTOs = items.stream()
-                .map(itemMapper::itemToWarehouseItemRestDTO)
-                .toList();
-        return ResponseEntity.ok(warehouseItemDTOs);
-    }
+  @Override
+  @PreAuthorize("isAuthenticated()")
+  public ResponseEntity<List<WarehouseItemRestDTO>> listWarehouseItems(Long warehouseId) {
+    List<Item> items = itemService.findItemsInWarehouse(warehouseId);
+    List<WarehouseItemRestDTO> warehouseItemDTOs = items.stream()
+        .map(itemMapper::itemToWarehouseItemRestDTO)
+        .toList();
+    return ResponseEntity.ok(warehouseItemDTOs);
+  }
 
-    @Override
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<WarehouseItemRestDTO> updateWarehouseItem(Long warehouseId, Long itemId,
-                                                                    WarehouseItemRequestRestDTO warehouseItemRequestRestDTO) {
-        Item updatedItem = itemService.updateItem(itemId, warehouseId, warehouseItemRequestRestDTO);
-        WarehouseItemRestDTO updatedItemDTO = itemMapper.itemToWarehouseItemRestDTO(updatedItem);
-        return ResponseEntity.ok(updatedItemDTO);
-    }
+  @Override
+  @PreAuthorize("hasRole('" + Fields.ROLE_ADMIN
+      + "') || @warehouseRepository.checkUserExistsInWarehouse(T(java.util.UUID).fromString(authentication.name), #warehouseId)")
+  public ResponseEntity<WarehouseItemRestDTO> updateWarehouseItem(Long warehouseId, Long itemId,
+      WarehouseItemRequestRestDTO warehouseItemRequestRestDTO) {
+    Item updatedItem = itemService.updateItem(itemId, warehouseId, warehouseItemRequestRestDTO);
+    WarehouseItemRestDTO updatedItemDTO = itemMapper.itemToWarehouseItemRestDTO(updatedItem);
+    return ResponseEntity.ok(updatedItemDTO);
+  }
 }

@@ -1,7 +1,6 @@
 package com.vetrikos.inventory.system.controller;
 
 import com.vetrikos.inventory.system.api.UsersApi;
-import com.vetrikos.inventory.system.config.SecurityConfiguration.ConfigAnonUserRoles.Fields;
 import com.vetrikos.inventory.system.mapper.UserMapper;
 import com.vetrikos.inventory.system.model.UserRestDTO;
 import com.vetrikos.inventory.system.service.UserService;
@@ -22,14 +21,14 @@ public class UserController implements UsersApi {
   private final UserMapper userMapper;
 
   @Override
-  @PreAuthorize("hasAnyRole('" + Fields.ROLE_ADMIN + "','" + Fields.ROLE_MANAGER + "')")
+  @PreAuthorize("isAuthenticated()")
   public ResponseEntity<List<UserRestDTO>> listUsers() {
     return ResponseEntity.ok(
         userService.findAll().stream().map(userMapper::userToUserRestDTO).toList());
   }
 
   @Override
-  @PreAuthorize("hasAnyRole('" + Fields.ROLE_ADMIN + "','" + Fields.ROLE_MANAGER + "')")
+  @PreAuthorize("isAuthenticated()")
   public ResponseEntity<UserRestDTO> getUserById(UUID userId) {
     return ResponseEntity.ok(userMapper.userToUserRestDTO(userService.findById(userId)));
   }
