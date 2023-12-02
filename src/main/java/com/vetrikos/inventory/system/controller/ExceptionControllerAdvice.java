@@ -8,6 +8,8 @@ import com.vetrikos.inventory.system.exception.WarehouseNotFoundException;
 import com.vetrikos.inventory.system.model.BadRequestErrorsInnerRestDTO;
 import com.vetrikos.inventory.system.model.BadRequestRestDTO;
 import com.vetrikos.inventory.system.model.ErrorRestDTO;
+import jakarta.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import java.util.List;
 import javax.naming.AuthenticationException;
 import lombok.extern.slf4j.Slf4j;
@@ -30,17 +32,25 @@ public class ExceptionControllerAdvice {
 
   @ExceptionHandler(value = {AccessDeniedException.class})
   @ResponseStatus(HttpStatus.FORBIDDEN)
-  protected ResponseEntity<Object> handleAccessDeniedException(
-      RuntimeException exception) {
-    log.error(exception.getMessage());
+  protected ResponseEntity<Object> handleAccessDeniedException(RuntimeException exception,
+      HttpServletRequest request) {
+    Principal principal = request.getUserPrincipal();
+    String requestURI = request.getRequestURI();
+
+    if (principal != null) {
+      log.error("Access denied on path: {}, for principal id: {}, : {}", requestURI,
+          principal.getName(), principal);
+    } else {
+      log.error("Access denied on path: {}", requestURI);
+    }
+
     return ResponseEntity.status(HttpStatus.FORBIDDEN)
         .body(new ErrorRestDTO(HttpStatus.FORBIDDEN.value(), exception.getMessage()));
   }
 
   @ExceptionHandler(value = {AuthenticationException.class})
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
-  protected ResponseEntity<Object> handleUnauthorizedException(
-      RuntimeException exception) {
+  protected ResponseEntity<Object> handleUnauthorizedException(RuntimeException exception) {
     log.error(exception.getMessage());
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
         .body(new ErrorRestDTO(HttpStatus.UNAUTHORIZED.value(), exception.getMessage()));
