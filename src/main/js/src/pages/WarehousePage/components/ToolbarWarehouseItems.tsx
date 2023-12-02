@@ -52,8 +52,7 @@ export default ({warehouseId, refetch}: Props): ReactElement => {
                 alignItems: 'center',
             }}>
                 <GridToolbar style={{paddingTop: "10px"}}/>
-                <PrivateComponent allowedRoles={[UserRoles.ROLE_ADMIN, UserRoles.ROLE_MANAGER]}>
-
+                <PrivateComponent allowedRoles={[UserRoles.ROLE_ADMIN, UserRoles.ROLE_MANAGER, UserRoles.ROLE_USER]}>
                     {
                         visible ?
                             <Button
