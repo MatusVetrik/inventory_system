@@ -31,7 +31,7 @@ public class WarehouseItemController implements WarehouseItemsApi {
       WarehouseItemRequestRestDTO warehouseItemRequestRestDTO) {
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(itemMapper.itemToWarehouseItemRestDTO(
-            itemService.createItem(warehouseId, warehouseItemRequestRestDTO)));
+            itemService.createItem(warehouseId, warehouseItemRequestRestDTO),warehouseId));
   }
 
   @Override
@@ -46,7 +46,7 @@ public class WarehouseItemController implements WarehouseItemsApi {
   @PreAuthorize("isAuthenticated()")
   public ResponseEntity<WarehouseItemRestDTO> getWarehouseItemById(Long warehouseId, Long itemId) {
     Item item = itemService.findItemInWarehouse(warehouseId, itemId);
-    WarehouseItemRestDTO warehouseItemDTO = itemMapper.itemToWarehouseItemRestDTO(item);
+    WarehouseItemRestDTO warehouseItemDTO = itemMapper.itemToWarehouseItemRestDTO(item,warehouseId);
     return ResponseEntity.ok(warehouseItemDTO);
   }
 
@@ -55,7 +55,7 @@ public class WarehouseItemController implements WarehouseItemsApi {
   public ResponseEntity<List<WarehouseItemRestDTO>> listWarehouseItems(Long warehouseId) {
     List<Item> items = itemService.findItemsInWarehouse(warehouseId);
     List<WarehouseItemRestDTO> warehouseItemDTOs = items.stream()
-        .map(itemMapper::itemToWarehouseItemRestDTO)
+        .map(item -> itemMapper.itemToWarehouseItemRestDTO(item, warehouseId))
         .toList();
     return ResponseEntity.ok(warehouseItemDTOs);
   }
@@ -66,7 +66,7 @@ public class WarehouseItemController implements WarehouseItemsApi {
   public ResponseEntity<WarehouseItemRestDTO> updateWarehouseItem(Long warehouseId, Long itemId,
       WarehouseItemRequestRestDTO warehouseItemRequestRestDTO) {
     Item updatedItem = itemService.updateItem(itemId, warehouseId, warehouseItemRequestRestDTO);
-    WarehouseItemRestDTO updatedItemDTO = itemMapper.itemToWarehouseItemRestDTO(updatedItem);
+    WarehouseItemRestDTO updatedItemDTO = itemMapper.itemToWarehouseItemRestDTO(updatedItem,warehouseId);
     return ResponseEntity.ok(updatedItemDTO);
   }
 }

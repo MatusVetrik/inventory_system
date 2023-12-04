@@ -11,10 +11,13 @@ import com.vetrikos.inventory.system.repository.ItemListEntryRepository;
 import com.vetrikos.inventory.system.repository.ItemRepository;
 import com.vetrikos.inventory.system.repository.WarehouseRepository;
 import jakarta.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
-
-import java.util.*;
 
 @Service
 public class ItemServiceImpl implements ItemService {
@@ -48,9 +51,9 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<Item> findItemsInWarehouse(Long warehouseId) {
         Warehouse warehouse = warehouseRepository.findById(warehouseId)
-                .orElseThrow(() -> new WarehouseNotFoundException(warehouseId));
+            .orElseThrow(() -> new WarehouseNotFoundException(warehouseId));
         List<ItemListEntry> itemListEntries = itemListEntryRepository.findItemListEntriesByWarehouse(
-                warehouse);
+            warehouse);
         if (itemListEntries.isEmpty()) {
             return new ArrayList<>();
         }
@@ -63,22 +66,23 @@ public class ItemServiceImpl implements ItemService {
 
         return new ArrayList<>(itemsInWarehouse);
     }
-    
+
     @NonNull
     @Override
     public Item findItemInWarehouse(Long warehouseId, Long itemId) {
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new ItemNotFoundException(itemId));
+            .orElseThrow(() -> new ItemNotFoundException(itemId));
         Warehouse warehouse = warehouseRepository.findById(warehouseId)
-                .orElseThrow(() -> new WarehouseNotFoundException(warehouseId));
+            .orElseThrow(() -> new WarehouseNotFoundException(warehouseId));
         List<ItemListEntry> existingItem = itemListEntryRepository.findItemListEntriesByWarehouseAndItem(
-                warehouse, item);
+            warehouse, item);
         if (existingItem.isEmpty()) {
             throw new ItemNotFoundException(itemId, warehouseId);
         }
 
         return existingItem.get(0).getItem();
     }
+
 
     @NonNull
     @Override

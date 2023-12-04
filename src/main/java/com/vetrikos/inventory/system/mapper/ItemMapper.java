@@ -7,8 +7,6 @@ import com.vetrikos.inventory.system.model.WarehouseItemRestDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import java.util.List;
-
 @Mapper
 public interface ItemMapper {
 
@@ -16,12 +14,17 @@ public interface ItemMapper {
     @Mapping(target = "entries", ignore = true)
     Item warehouseItemRequestRestDTOToItem(WarehouseItemRequestRestDTO warehouseItemRequestRestDTO);
 
-    @Mapping(target = "quantity", source = "entries")
-    WarehouseItemRestDTO itemToWarehouseItemRestDTO(Item item);
+    default WarehouseItemRestDTO itemToWarehouseItemRestDTO(Item item, Long warehouseId) {
+        WarehouseItemRestDTO dto = new WarehouseItemRestDTO();
+        Long quantity = item.getEntries().stream()
+            .filter(entry -> entry.getWarehouse().getId().equals(warehouseId))
+            .map(ItemListEntry::getQuantity)
+            .reduce(0L, Long::sum);
 
-    default Long itemListEntriesToQuantity(List<ItemListEntry> itemListEntries) {
-        return itemListEntries.stream()
-                .map(ItemListEntry::getQuantity)
-                .reduce(0L, Long::sum);
+        dto.setQuantity(quantity);
+        dto.setName(item.getName());
+        dto.setId(item.getId());
+        dto.setSize(item.getSize());
+        return dto;
     }
 }

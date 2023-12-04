@@ -10,6 +10,7 @@ import com.vetrikos.inventory.system.repository.ItemListEntryRepository;
 import com.vetrikos.inventory.system.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
@@ -91,7 +92,7 @@ public class OrderServiceImpl implements OrderService {
           (itemsCapacity + currentCapacityDestination) - destinationWarehouse.getCapacity());
     }
   }
-
+  @Transactional
   private void updateSourceWarehouseEntries(Warehouse sourceWarehouse, Item item, Long quantity) {
     ItemListEntry itemListEntrySource = findItemListEntryInWarehouse(sourceWarehouse, item);
 
@@ -126,10 +127,18 @@ public class OrderServiceImpl implements OrderService {
         .orElseThrow(() -> new IllegalStateException("No item found in warehouse"));
   }
 
+  @Transactional
   private void removeAndDeleteItemListEntry(Warehouse warehouse, ItemListEntry itemListEntry) {
     warehouse.getEntries().remove(itemListEntry);
-    itemListEntry.setWarehouse(null);
-    itemListEntryRepository.delete(itemListEntry);
+    Optional<ItemListEntry> itemListEntryOptional = itemListEntryRepository.findById(itemListEntry.getId());
+    if(itemListEntryOptional.isPresent()){
+      itemListEntry=itemListEntryOptional.get();
+      itemListEntry.setWarehouse(null);
+      itemListEntry.setItem(null);
+      itemListEntryRepository.delete(itemListEntry);
+      itemListEntryRepository.flush();
+    }
+
   }
 
 
