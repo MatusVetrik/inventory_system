@@ -21,7 +21,7 @@
 		<lombok.mapstruct.binding.version>0.2.0</lombok.mapstruct.binding.version>
 		<default.package>com.vetrikos.inventory.system</default.package>
 		<openapi-generator-maven-plugin.version>6.6.0</openapi-generator-maven-plugin.version>
-		<springdoc-openapi-starter-webmvc-ui.version>2.2.0</springdoc-openapi-starter-webmvc-ui.version>
+		<springdoc-openapi-starter-webmvc-ui.version>2.3.0</springdoc-openapi-starter-webmvc-ui.version>
 		<testcontainers.postgresql.version>1.19.1</testcontainers.postgresql.version>
 		<testcontainers.version>1.19.1</testcontainers.version>
 		<testcontainers-keycloak.version>2.5.0</testcontainers-keycloak.version>
